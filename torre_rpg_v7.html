@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020711">
+<title>A GRANDE TORRE // Arquivo do Escalador</title>
+<meta name="description" content="Arquivo de referência e ferramentas do RPG de escalada da Torre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+ --bg:#02050a;--bg2:#050b14;--panel:#06101d;--panel2:#09192b;--panel3:#0b2138;
+ --line:#12395e;--line2:#1c5a8b;--blue:#087cff;--cyan:#39bfff;--cyan2:#78dcff;
+ --text:#c5d8e8;--muted:#718ba2;--dim:#49647c;--shadow:0 18px 60px #000c;
+ --glow:0 0 12px #078cff55,0 0 30px #006cff28;--cut:16px;
+ color-scheme:dark
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scrollbar-color:#145080 #030912}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,system-ui,sans-serif;background:
+ radial-gradient(ellipse 44% 55% at 50% 46%,#07539a18 0%,transparent 72%),
+ radial-gradient(ellipse at 50% -15%,#06376a55 0,transparent 36%),
+ radial-gradient(ellipse at 0% 48%,#06447a20 0,transparent 28%),
+ radial-gradient(ellipse at 100% 78%,#034b8520 0,transparent 28%),#02050a}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.18;background-image:linear-gradient(#1674b014 1px,transparent 1px),linear-gradient(90deg,#1674b014 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(#000 0%,transparent 88%)}
+#emberField{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.52;mix-blend-mode:screen;transition:opacity .35s}
+body.quiet-mode #emberField{opacity:.13}
+button,input,select{font:inherit}button{cursor:pointer}
+.ui-icon{width:18px;height:18px;display:inline-block;flex:0 0 auto;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.ui-icon.lg{width:23px;height:23px}.ui-icon.xl{width:31px;height:31px}
+.topbar{height:68px;position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(15px,4vw,58px);background:#02060bed;border-bottom:1px solid #11518799;box-shadow:0 8px 35px #0009,0 1px 18px #007bff17;backdrop-filter:blur(18px)}
+.brand{display:flex;align-items:center;gap:13px;color:#b9d8ee;font:800 19px 'Barlow Condensed',sans-serif;letter-spacing:2.3px;text-shadow:0 0 14px #007bff48}
+.brand-mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid #27aaff;background:linear-gradient(145deg,#082b4b,#030b16);color:var(--cyan2);box-shadow:var(--glow);clip-path:polygon(0 0,72% 0,100% 28%,100% 100%,28% 100%,0 72%)}
+.top-actions{display:flex;gap:8px}.icon-btn,.ghost-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:40px;min-height:39px;padding:8px 11px;border:1px solid #174b76;background:linear-gradient(145deg,#091a2b,#030912);color:#9fc8e3;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));transition:.2s}
+.icon-btn:hover,.ghost-btn:hover{color:var(--cyan2);border-color:var(--cyan);box-shadow:0 0 15px #008cff44}
+.shell{position:relative;z-index:1;max-width:1400px;margin:auto;padding:0 clamp(22px,3.5vw,48px) 58px}
+.hero{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);align-items:center;gap:24px;min-height:315px;margin:28px 0 18px;padding:clamp(24px,4.5vw,56px);overflow:hidden;border:1px solid #17629c;background:radial-gradient(ellipse at 78% 45%,#064b8155,transparent 38%),linear-gradient(112deg,#030912 0%,#06172a 52%,#04101d 100%);box-shadow:0 0 0 1px #006dff22,0 0 28px #006dff27,inset 0 0 44px #006dff0c,var(--shadow);clip-path:polygon(0 20px,20px 0,calc(100% - 55px) 0,100% 55px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px))}
+.hero:before{content:"";position:absolute;inset:8px;z-index:-1;pointer-events:none;border:1px solid #17609a66;clip-path:polygon(0 14px,14px 0,calc(100% - 42px) 0,100% 42px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px))}
+.hero:after{content:"";position:absolute;z-index:-1;right:8%;top:-100px;width:370px;height:500px;opacity:.45;pointer-events:none;background:repeating-linear-gradient(115deg,transparent 0 24px,#087cff0a 25px 26px,transparent 27px 45px);transform:skew(-13deg);mask-image:linear-gradient(transparent,#000 28%,#000 70%,transparent)}
+.hero-copy{position:relative;z-index:1}.eyebrow,.section-kicker{color:#43bfff;font-size:9px;font-weight:800;letter-spacing:2.8px;text-transform:uppercase;text-shadow:0 0 12px #008cff55}
+.hero h1{margin:15px 0 13px;max-width:720px;color:#bdd5e8;font:900 clamp(46px,8vw,88px)/.88 'Barlow Condensed',sans-serif;letter-spacing:1.3px;text-transform:uppercase;text-shadow:0 2px 20px #0069bb55}
+.hero h1 span{color:#3dbbff;text-shadow:0 0 9px #27aaff,0 0 25px #007bffb0,0 0 48px #006dff55}
+.hero p{max-width:610px;margin:0;color:#87a9c4;font-size:13px;line-height:1.85}
+.hero-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.hero-fact{display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid #16456f;background:#04101d9c;color:#81b4d7;font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase}
+.hero-fact .ui-icon{color:var(--cyan);width:15px;height:15px}
+.hero-art{position:relative;display:grid;place-items:center;min-height:220px;z-index:1}
+.tower-orbit{position:relative;width:min(100%,270px);height:240px;display:grid;place-items:center}
+.tower-orbit:before,.tower-orbit:after{content:"";position:absolute;border:1px solid #168eea66;border-radius:50%;transform:rotate(-22deg);box-shadow:0 0 18px #007bff30}
+.tower-orbit:before{width:225px;height:90px}.tower-orbit:after{width:175px;height:205px;transform:rotate(32deg);border-color:#1aaaff38}
+.tower-svg{width:118px;height:205px;filter:drop-shadow(0 0 9px #087cffaa) drop-shadow(0 0 26px #007bff77);animation:towerFloat 5s ease-in-out infinite}
+.orbit-node{position:absolute;width:7px;height:7px;border-radius:50%;background:#76dfff;box-shadow:0 0 9px #2bbcff,0 0 22px #087cff;animation:nodePulse 2s infinite}.node-a{top:24px;left:54px}.node-b{right:32px;top:75px;animation-delay:.6s}.node-c{bottom:28px;left:67px;animation-delay:1.1s}
+@keyframes towerFloat{50%{transform:translateY(-7px)}}@keyframes nodePulse{50%{opacity:.35;transform:scale(.65)}}
+.nav-wrap{position:sticky;top:68px;z-index:25;display:flex;gap:5px;padding:7px;overflow-x:auto;scrollbar-width:thin;border:1px solid #16466e;background:#030a13ed;box-shadow:0 8px 28px #0008,0 0 18px #006dff12;backdrop-filter:blur(14px);clip-path:polygon(0 0,calc(100% - 17px) 0,100% 17px,100% 100%,0 100%)}
+.nav-btn{flex:1;min-width:max-content;display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 16px;border:1px solid transparent;background:transparent;color:#6688a4;font:700 12px 'Barlow Condensed';letter-spacing:1.5px;text-transform:uppercase;transition:.2s}
+.nav-btn .ui-icon{color:#368dc5;width:17px;height:17px}.nav-btn:hover{color:#b4d5ec;background:#08203a}.nav-btn.active{border-color:#137fc0;background:linear-gradient(105deg,#06366a,#075b99 60%,#073b68);color:#b8e6ff;box-shadow:inset 0 0 14px #159fff35,0 0 17px #007bff36;text-shadow:0 0 12px #24aaff66}.nav-btn.active .ui-icon{color:#65d5ff;filter:drop-shadow(0 0 5px #009dff)}
+.section{margin-top:25px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:27px 0 17px}.section h2{margin:5px 0 0;color:#bed5e7;font:800 32px 'Barlow Condensed';letter-spacing:1.4px;text-transform:uppercase;text-shadow:0 0 18px #006dff2a}.sub{margin-top:4px;color:#718da5;font-size:11px;line-height:1.65}.count{color:#4e8eb9;font:700 10px 'Barlow Condensed';letter-spacing:1.8px;text-align:right}
+/* painel de missão / dashboard */
+.dashboard-top{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(270px,.7fr);gap:14px;align-items:stretch}
+.mission-screen,.system-aside,.info-panel,.lore-panel,.lore-feature{position:relative;isolation:isolate;overflow:hidden;border:1px solid #164b77;background:radial-gradient(ellipse at 50% 0%,#07386555,transparent 55%),linear-gradient(145deg,#07172a,#030a13 78%);box-shadow:0 0 0 1px #006cff14,0 12px 35px #0009,inset 0 0 28px #007bff0a;clip-path:polygon(0 13px,13px 0,calc(100% - 20px) 0,100% 20px,100% calc(100% - 13px),calc(100% - 13px) 100%,13px 100%,0 calc(100% - 13px))}
+.mission-screen:before,.system-aside:before,.info-panel:before,.lore-panel:before,.lore-feature:before,.physical-card:before{content:"";position:absolute;left:0;top:0;width:58px;height:2px;background:linear-gradient(90deg,#53d7ff,#087cff);box-shadow:0 0 9px #00aaff,0 0 22px #007bff;z-index:2}
+.mission-screen{padding:clamp(18px,3vw,28px)}.mission-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid #123b60}.mission-label{display:flex;align-items:center;gap:11px;color:#8fc5e7;font:700 12px 'Barlow Condensed';letter-spacing:2px}.mission-icon{width:37px;height:37px;display:grid;place-items:center;border:1px solid #258ccb;color:#69d6ff;background:#04182b;box-shadow:0 0 14px #007bff36}.live-tag{display:inline-flex;align-items:center;gap:7px;color:#5da8d5;font:700 9px 'Barlow Condensed';letter-spacing:1.5px}.live-dot{width:6px;height:6px;border-radius:50%;background:#35bfff;box-shadow:0 0 8px #00aaff,0 0 15px #007bff;animation:nodePulse 1.8s infinite}
+.mission-screen h3{margin:21px 0 8px;color:#c7dfef;font:800 27px 'Barlow Condensed';letter-spacing:1.4px;text-transform:uppercase}.mission-screen>p{max-width:600px;color:#7f9fb8;font-size:12px;line-height:1.8;margin:0}.mission-objective{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin-top:22px;padding:13px 14px;border:1px solid #155080;background:linear-gradient(100deg,#062447,#041323);box-shadow:inset 0 0 22px #007bff12}.objective-title{color:#4dbfff;font:700 9px 'Barlow Condensed';letter-spacing:2px}.objective-text{margin-top:5px;color:#afc9dc;font-size:11px;line-height:1.6}.objective-code{color:#3e89ba;font:700 10px 'Barlow Condensed';letter-spacing:1.5px;white-space:nowrap}
+.system-aside{padding:20px}.aside-kicker{color:#4dbfff;font:700 9px 'Barlow Condensed';letter-spacing:2px}.system-aside h3{margin:8px 0 4px;color:#bcd7e9;font:800 23px 'Barlow Condensed';letter-spacing:1px}.system-aside p{margin:0;color:#718da5;font-size:11px;line-height:1.7}.module-progress{height:5px;margin-top:17px;background:#102b45;overflow:hidden}.module-progress span{display:block;width:40%;height:100%;background:linear-gradient(90deg,#087cff,#4bd0ff);box-shadow:0 0 12px #008cff;}
+.module-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}.module-card{position:relative;min-height:112px;padding:15px 14px;border:1px solid #123d64;background:linear-gradient(145deg,#08182a,#030b15);color:#a9c9df;text-align:left;clip-path:polygon(0 11px,11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%);transition:.2s}.module-card:hover{transform:translateY(-3px);border-color:#32baff;box-shadow:0 0 20px #007bff37,inset 0 0 20px #008cff16}.module-card .module-icon{display:grid;place-items:center;width:33px;height:33px;border:1px solid #175a89;background:#04172a;color:#53caff;margin-bottom:12px;box-shadow:0 0 12px #007bff2c}.module-card b{display:block;color:#b5d3e7;font:700 16px 'Barlow Condensed';letter-spacing:.7px}.module-card small{display:block;margin-top:4px;color:#62839e;font-size:9px;line-height:1.5}.module-card .module-status{position:absolute;right:10px;top:12px;color:#3c8bb9;font:700 8px 'Barlow Condensed';letter-spacing:1px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 13px}.search{position:relative;flex:1;min-width:220px}.search .ui-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#3daee9;width:17px;height:17px}.search input{width:100%;height:40px;padding:10px 13px 10px 39px;border:1px solid #16466f;background:#030b15;color:#b9d5e8;outline:none;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}.search input::placeholder{color:#54728c}.search input:focus,select:focus{border-color:#36bfff;box-shadow:0 0 0 2px #008cff24,0 0 16px #007bff35}
+select{height:40px;min-width:150px;padding:9px 32px 9px 12px;border:1px solid #16466f;background:#030b15;color:#94b8d2;outline:none;border-radius:0;font-size:11px}.tool-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 12px;border:1px solid #174d78;background:linear-gradient(145deg,#0b2035,#040c17);color:#8ebbd8;font-size:10px;font-weight:800;letter-spacing:.4px;transition:.2s;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px))}.tool-btn .ui-icon{width:15px;height:15px}.tool-btn:hover{border-color:#3bc4ff;color:#c2eaff;box-shadow:0 0 14px #007bff38}
+.physical-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:5px 0 12px;color:#547b99;font:700 9px 'Barlow Condensed';letter-spacing:1.5px}.physical-meta strong{color:#5fcaff;font-weight:800}
+.physical-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;align-items:start}
+.physical-card{position:relative;min-width:0;overflow:hidden;border:1px solid #123e65;background:linear-gradient(145deg,#07172a,#030a13 78%);box-shadow:0 8px 25px #0008,inset 0 0 20px #007bff08;clip-path:polygon(0 12px,12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);transition:border-color .2s,box-shadow .2s}
+.physical-card:hover{border-color:#218bc9;box-shadow:0 0 0 1px #007bff24,0 0 20px #007bff24,0 8px 25px #0009}
+.card-top{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:67px;padding:14px 228px 14px 15px;border:0;border-bottom:1px solid #103555;background:linear-gradient(90deg,#0b2036aa,transparent);color:inherit;text-align:left;list-style:none;cursor:pointer}
+.card-top::-webkit-details-marker{display:none}.card-title{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%;color:#bad5e7;font:800 20px/1.08 'Barlow Condensed';letter-spacing:.45px}.card-title>span:last-child{min-width:0;overflow-wrap:anywhere}.type-glyph{display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border:1px solid #1c689b;background:#04182b;color:#54cbff;box-shadow:0 0 10px #007bff3d}.type-glyph .ui-icon{width:17px;height:17px}
+.pills{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:5px}.pill{padding:5px 7px;border:1px solid #174b72;background:#071c30;color:#83b5d5;font-size:8px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;white-space:nowrap}.rarity-comum{color:#a0adba;text-shadow:0 0 7px #9eacbb20}
+.rarity-incomum{color:#7bc992;text-shadow:0 0 8px #55c87924}
+.rarity-raro{color:#55d3ff;text-shadow:0 0 9px #37c8ff35}
+.rarity-lendário{color:#e4c66f;text-shadow:0 0 9px #dcb64b30}
+.expand-mark{position:relative;display:grid;place-items:center;flex:0 0 23px;width:23px;height:23px;margin-left:2px;border:1px solid #174c76;color:#56bde9;transition:transform .25s,background .25s}
+.card-share{display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;padding:0;border:1px solid #1b5a85;background:linear-gradient(145deg,#0b2a46,#04101d);color:#55caff;box-shadow:inset 0 0 9px #087cff16;transition:.2s;cursor:pointer}
+.card-share .ui-icon{width:14px;height:14px}
+.card-share:hover,.card-share:focus-visible{outline:none;border-color:#5bd7ff;color:#a8eaff;box-shadow:0 0 12px #078cff66,inset 0 0 12px #087cff28}
+.card-share:disabled{opacity:.45;cursor:wait}
+.card-share.is-sharing{color:#b8eaff;box-shadow:0 0 16px #078cff88}
+.card-controls{position:absolute;z-index:4;top:20px;right:13px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 20px)}
+.card-expand{display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;padding:0;border:0;background:transparent;color:#56bde9;cursor:pointer}
+.card-expand:hover{color:#a8eaff;filter:drop-shadow(0 0 6px #078cff88)}
+.card-expand:focus-visible{outline:1px solid #55caff;outline-offset:2px}.expand-mark:before,.expand-mark:after{content:"";position:absolute;width:9px;height:1px;background:currentColor}.expand-mark:after{transform:rotate(90deg)}details[open] .expand-mark{background:#07365a;box-shadow:0 0 10px #007bff33;transform:rotate(45deg)}
+.card-body{padding:13px 15px 16px}.description{margin:0 0 14px;color:#819fb8;font-size:11px;line-height:1.8}.bonus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.bonus-box{min-width:0;padding:11px;border:1px solid #123b60;background:linear-gradient(145deg,#061426,#030a13);box-shadow:inset 0 0 16px #007bff08}.bonus-box h4{display:flex;align-items:center;gap:7px;margin:0 0 9px;color:#53c5f5;font:700 12px 'Barlow Condensed';letter-spacing:.8px;text-transform:uppercase}.bonus-box h4 .ui-icon{width:14px;height:14px}.bonus-box ul{list-style:none;padding:0;margin:0}.bonus-box li{display:flex;align-items:flex-start;gap:7px;margin:0 0 8px;color:#91acc2;font-size:10px;line-height:1.65;overflow-wrap:anywhere}.bonus-box li:last-child{margin-bottom:0}.stat-ico{display:grid;place-items:center;flex:0 0 16px;width:16px;height:16px;margin-top:1px;color:#43bfff;opacity:.9}.stat-ico .ui-icon{width:14px;height:14px}.bonus-box strong{color:#b3d5e9}
+.empty{display:grid;justify-items:center;gap:7px;padding:40px 22px;border:1px dashed #174b73;background:linear-gradient(145deg,#07182a,#030a13);color:#759bb7;text-align:center;clip-path:polygon(0 13px,13px 0,100% 0,100% calc(100% - 13px),calc(100% - 13px) 100%,0 100%)}.empty .symbol{display:grid;place-items:center;width:48px;height:48px;border:1px solid #1b689b;color:#52caff;background:#041a2e;box-shadow:0 0 15px #007bff36}.empty h3{margin:7px 0 0;color:#a9c9df;font:800 22px 'Barlow Condensed';letter-spacing:1px}.empty p{max-width:540px;margin:0;color:#708da5;font-size:11px;line-height:1.7}
+.info-panel{padding:21px}.info-panel h3{margin:0 0 9px;color:#b6d1e4;font:700 20px 'Barlow Condensed';letter-spacing:.8px}.info-panel p{margin:0;color:#7997b0;font-size:11px;line-height:1.8}.status-line{display:flex;align-items:center;gap:8px;margin-bottom:12px;color:#49bfff;font-size:9px;font-weight:800;letter-spacing:1.6px}.pulse{width:7px;height:7px;border-radius:50%;background:#37bfff;box-shadow:0 0 8px #37bfff,0 0 16px #007bff;animation:nodePulse 1.8s infinite}
+/* Introdução e registros da Torre */
+.lore-feature,.lore-panel{padding:clamp(18px,3vw,27px)}.lore-feature{margin-bottom:13px;background:radial-gradient(ellipse at 50% 0%,#06427455,transparent 58%),linear-gradient(145deg,#07192c,#030a13 78%)}.lore-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}.lore-index{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px;color:#5789b0;font:700 9px 'Barlow Condensed';letter-spacing:2px}.lore-index span{display:inline-flex;align-items:center;gap:6px;color:#50bdf0}.lore-index span:before{content:"";width:5px;height:5px;border-radius:50%;background:#36baff;box-shadow:0 0 8px #008cff}.lore-feature-title,.lore-panel-head{display:flex;align-items:center;gap:13px;margin-bottom:15px}.lore-sigil{display:grid;place-items:center;flex:0 0 45px;width:45px;height:45px;border:1px solid #2181bb;background:linear-gradient(145deg,#073457,#04101d);color:#66ceff;box-shadow:0 0 14px #007bff3b,inset 0 0 14px #0a8fff23}.lore-sigil .ui-icon{width:23px;height:23px}.lore-feature-title small,.lore-panel-head small{color:#4cb8e9;font-size:8px;font-weight:800;letter-spacing:2px}.lore-feature-title h3,.lore-panel-head h3{margin:3px 0 0;color:#b9d5e8;font:800 24px 'Barlow Condensed';letter-spacing:1.2px}.lore-feature p,.lore-panel p{margin:0 0 12px;color:#819eb6;font-size:11px;line-height:1.85}.lore-feature strong,.lore-panel strong{color:#bad8eb}.system-message{margin:16px 0;padding:15px;border:1px solid #1b6599;background:linear-gradient(110deg,#062b4b,#04101d);box-shadow:0 0 22px #006dff19,inset 0 0 22px #0b84ff0e;position:relative}.system-message:after{content:"";position:absolute;right:0;top:0;width:30px;height:30px;border-top:1px solid #4acaff;border-right:1px solid #4acaff;filter:drop-shadow(0 0 5px #008cff)}.system-message-top{display:flex;justify-content:space-between;gap:8px;color:#4cbfff;font:700 9px 'Barlow Condensed';letter-spacing:1.4px}.system-message-top i{font-style:normal;color:#527f9e}.system-message>p{margin:12px 0 9px;color:#b4d9ee;font:600 16px 'Barlow Condensed';letter-spacing:.4px}.system-record{padding-top:9px;border-top:1px solid #174b71;color:#65caff;font:700 11px 'Barlow Condensed';letter-spacing:1px}.system-record span{margin:0 5px;color:#318fc9}.system-record span:last-child{color:#7699b2}.system-note{display:flex;gap:12px;align-items:flex-start;margin-top:15px;padding:13px;border:1px solid #164a72;background:#061629}.system-note .note-sigil{color:#57c9ff}.system-note .ui-icon{width:20px;height:20px}.system-note p{margin:0}.party-flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin-top:17px;padding:14px 10px;border:1px solid #16466c;background:#03101d;color:#8dc9e9;font:700 10px 'Barlow Condensed';letter-spacing:1.5px}.party-flow b{color:#43bfff;font-size:18px;text-shadow:0 0 12px #008cff}.legacy-feature{background:radial-gradient(ellipse at 50% 0%,#06427344,transparent 58%),linear-gradient(145deg,#061629,#030a13)}
+.footer{display:flex;justify-content:space-between;gap:12px;margin-top:46px;padding:18px 0;border-top:1px solid #123657;color:#496982;font-size:8px;letter-spacing:1.5px}.toast{position:fixed;z-index:60;bottom:20px;left:50%;transform:translate(-50%,18px);opacity:0;pointer-events:none;padding:11px 16px;border:1px solid #288dc8;background:#061a2b;color:#9ddcff;box-shadow:0 0 24px #007bff66;font-size:11px;font-weight:800;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
+body.quiet-mode{--glow:none}body.quiet-mode .brand-mark,body.quiet-mode .nav-btn.active,body.quiet-mode .mission-icon,body.quiet-mode .module-icon,body.quiet-mode .type-glyph,body.quiet-mode .lore-sigil{box-shadow:none}body.quiet-mode .tower-svg{filter:none;animation:none}body.quiet-mode .live-dot,body.quiet-mode .pulse,body.quiet-mode .orbit-node{animation:none;box-shadow:none}
+/* Resposta rápida ao hover, foco e interação dos controles. */
+button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card-share,.card-expand{transition-duration:.12s!important}
+@media(max-width:980px){.hero{grid-template-columns:1fr minmax(200px,.65fr)}.module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.bonus-grid{grid-template-columns:1fr}.bonus-box li{font-size:11px}}
+@media(max-width:720px){.card-top{min-height:86px;padding:14px 15px 49px}.card-controls{top:auto;bottom:9px;right:13px}.card-top .pills{margin-left:0}.topbar{height:60px}.brand{font-size:16px;letter-spacing:1.4px}.brand-mark{width:31px;height:31px}.nav-wrap{top:60px}.shell{padding-left:14px;padding-right:14px}.hero{grid-template-columns:1fr;min-height:0;padding:26px 20px 20px;margin-top:16px}.hero-art{min-height:150px}.tower-orbit{height:150px}.tower-svg{height:133px;width:85px}.tower-orbit:before{width:170px;height:60px}.tower-orbit:after{width:130px;height:130px}.hero h1{font-size:clamp(44px,13vw,65px)}.hero p{font-size:12px}.hero-facts{margin-top:15px}.nav-btn{padding:11px 12px;font-size:11px}.section-head{align-items:flex-start;flex-direction:column;margin-top:22px}.count{text-align:left}.dashboard-top{grid-template-columns:1fr}.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.physical-grid{grid-template-columns:1fr}.lore-grid{grid-template-columns:1fr}.lore-index{font-size:8px}.lore-feature-title h3,.lore-panel-head h3{font-size:21px}.footer{flex-direction:column;line-height:1.7}.toolbar{gap:7px}.search{flex-basis:100%}.toolbar select{flex:1;min-width:0}.tool-btn{flex:1}.objective-code{font-size:8px}}
+@media(max-width:390px){.module-grid{grid-template-columns:1fr 1fr}.module-card{padding:12px 10px}.brand{font-size:14px}.hero-fact{font-size:8px}.mission-screen h3{font-size:23px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<canvas id="emberField" aria-hidden="true"></canvas>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark"><span id="brandGlyph"></span></div><span>ARQUIVO // A GRANDE TORRE</span></div>
+  <div class="top-actions">
+    <button class="icon-btn" id="themeBtn" title="Alternar efeitos de iluminação" aria-label="Alternar efeitos de iluminação"></button>
+  </div>
+</header>
+<main class="shell">
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">TOWER SYSTEM // TERMINAL DE ACESSO DO ESCALADOR</div>
+      <h1>A GRANDE<br><span>TORRE.</span></h1>
+      <p>Um arquivo vivo sobre a estrutura dimensional, o Sistema e aqueles que desafiam seus andares. Consulte os registros, organize sua Party e prepare-se para a próxima ascensão.</p>
+      <div class="hero-facts">
+        <span class="hero-fact"><span id="heroFactTower"></span> Estrutura dimensional</span>
+        <span class="hero-fact"><span id="heroFactRecords"></span> 25 registros físicos</span>
+        <span class="hero-fact"><span id="heroFactStatus"></span> Sistema ativo</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true"><div class="tower-orbit">
+      <span class="orbit-node node-a"></span><span class="orbit-node node-b"></span><span class="orbit-node node-c"></span>
+      <svg class="tower-svg" viewBox="0 0 120 220" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 5 76 35 72 190 60 214 48 190 44 35 60 5Z" stroke="#54CBFF" stroke-width="1.8"/><path d="M60 17 67 43 65 184 60 199 55 184 53 43 60 17Z" stroke="#087CFF" stroke-width="2"/><path d="M44 46 24 62 20 164 48 190M76 46 96 62 100 164 72 190" stroke="#2AAFFF" stroke-width="1.5"/><path d="M24 62 44 73 53 67M96 62 76 73 67 67M20 164 43 153 48 190M100 164 77 153 72 190" stroke="#3CC5FF" stroke-width="1.3"/><path d="M60 5V214M44 46H76M42 85H78M41 126H79M39 164H81" stroke="#79DEFF" stroke-opacity=".65" stroke-width=".8"/><path d="M48 35 60 22 72 35M48 190 60 214 72 190" stroke="#82E3FF" stroke-width="1.2"/></svg>
+    </div></div>
+  </section>
+  <nav class="nav-wrap" aria-label="Navegação principal">
+    <button class="nav-btn active" data-page="inicio"><span data-icon="home"></span> Início</button>
+    <button class="nav-btn" data-page="introducao"><span data-icon="tower"></span> Introdução</button>
+    <button class="nav-btn" data-page="mecanicas"><span data-icon="sliders"></span> Mecânicas</button>
+    <button class="nav-btn" data-page="fisicos"><span data-icon="body"></span> Físicos</button>
+    <button class="nav-btn" data-page="classes"><span data-icon="layers"></span> Classes</button>
+    <button class="nav-btn" data-page="tracos"><span data-icon="diamond"></span> Traços</button>
+  </nav>
+  <div id="pageContent"></div>
+  <footer class="footer"><span>THE TOWER ARCHIVE · PLAYER DATABASE</span><span>UNOFFICIAL RPG COMPENDIUM · BUILD 0.1</span></footer>
+</main>
+<div class="toast" id="toast">Registro atualizado.</div>
+<script>
+
+const ICONS = {
+ home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/>',
+ tower:'<path d="m12 2 4 5-1 14H9L8 7Z"/><path d="M9 7h6M8.5 12h7M9 17h6M5 8l3 2M19 8l-3 2M5 19l4-2M19 19l-4-2"/>',
+ sliders:'<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="18" r="2"/>',
+ body:'<circle cx="12" cy="4.5" r="2.5"/><path d="M8 21v-5l-2-3 2-5h8l2 5-2 3v5M8 11h8M10 16h4"/>',
+ layers:'<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/>',
+ diamond:'<path d="m12 2 9 10-9 10L3 12 12 2Z"/><path d="m12 7 4.5 5-4.5 5-4.5-5L12 7Z"/>',
+ search:'<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/>',
+ copy:'<rect x="8" y="8" width="12" height="13" rx="1.5"/><path d="M16 8V5a1.5 1.5 0 0 0-1.5-1.5h-9A1.5 1.5 0 0 0 4 5v11A1.5 1.5 0 0 0 5.5 17H8"/>',
+ share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.2M8.7 13.4l6.6 4.2"/>' ,
+
+ print:'<path d="M7 8V3h10v5M7 17H4a2 2 0 0 1-2-2v-4a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v4a2 2 0 0 1-2 2h-3"/><path d="M7 14h10v7H7zM18 11h.01"/>',
+ glow:'<path d="m12 2 1.5 6.5L20 10l-6.5 1.5L12 18l-1.5-6.5L4 10l6.5-1.5L12 2Z"/><path d="m19 16 .7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z"/>',
+ database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+ quest:'<path d="M5 3h14v18H5z"/><path d="M8 8h8M8 12h8M8 16h5"/><path d="m9 3 3-2 3 2"/>',
+ shield:'<path d="M12 2 20 5v6c0 5-3.4 8.8-8 11-4.6-2.2-8-6-8-11V5l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/>',
+ bolt:'<path d="m13 2-9 12h7l-1 8 10-13h-7l1-7Z"/>',
+ eye:'<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/>',
+ book:'<path d="M4 4h6a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H4zM20 4h-4a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h4z"/>',
+ wave:'<path d="M2 8c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/>',
+ spark:'<path d="m12 2 1.7 7.3L21 11l-7.3 1.7L12 20l-1.7-7.3L3 11l7.3-1.7L12 2Z"/>',
+ target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m12 12 7-7"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ circle:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+ arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ hand:'<path d="M7 12V6a1.5 1.5 0 0 1 3 0v5-7a1.5 1.5 0 0 1 3 0v7-5a1.5 1.5 0 0 1 3 0v7-3a1.5 1.5 0 0 1 3 0v6c0 4-2.5 6-6 6h-1c-2 0-3.2-.8-4.5-2.2L4 15a1.8 1.8 0 0 1 3-2l2 2"/>',
+ alert:'<path d="M12 3 22 20H2L12 3Z"/><path d="M12 9v5M12 17h.01"/>',
+
+};
+function svgIcon(name, cls='ui-icon') { return `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] || ICONS.circle}</svg>`; }
+const CATEGORY_ICON = {Adaptativo:'target',Dominante:'shield',Cinético:'bolt',Fortificado:'shield',Especializado:'eye',Anômalo:'spark'};
+const STAT_ICON = {'⬡':'shield','◆':'bolt','ϟ':'bolt','⟳':'target','▣':'layers','◇':'eye','⌁':'shield','⛨':'shield','◎':'eye','✹':'bolt','◌':'circle','Ⅱ':'layers','⊙':'circle','≋':'wave','⌘':'book','⊕':'plus','⊘':'target','✧':'spark','✦':'spark','△':'target','▤':'book','▰':'shield','⟐':'spark','◉':'eye','⌖':'target','⟡':'spark','♛':'tower','⚗':'circle'};
+function statLine(value){const match=value.match(/^([^\w\s+.-]+)\s*/u);if(!match)return `<li><span class="stat-ico">${svgIcon('circle')}</span><span>${value}</span></li>`;const symbol=match[1];return `<li><span class="stat-ico">${svgIcon(STAT_ICON[symbol]||'circle')}</span><span>${value.slice(match[0].length)}</span></li>`;}
+function fillIcons(root=document){root.querySelectorAll('[data-icon]').forEach(el=>{el.innerHTML=svgIcon(el.dataset.icon)});}
+
+const physiques = [
+{name:"Estrutura Adaptativa",emoji:"⬡",category:"Adaptativo",rarity:"Comum",desc:"Um corpo proporcional e versátil, cuja estrutura óssea, musculatura e sistema nervoso apresentam excelente equilíbrio. Não é o melhor em nenhuma especialidade específica, mas possui facilidade para se adaptar a diferentes estilos de combate e condições ambientais.",initial:["◆ +1 de Força","⬡ +1 de Constituição","⟳ Pode trocar dois atributos físicos de lugar."],level:["▣ +2 em um atributo físico aleatório."],milestone:["◆ +2 de Força","⬡ +2 de Constituição","◇ +2 de Presença"]},
+{name:"Ossatura Robusta",emoji:"⌁",category:"Dominante",rarity:"Comum",desc:"Possui ossos espessos, articulações estáveis e uma estrutura esquelética capaz de suportar cargas e impactos acima da média. Seu corpo é especialmente adequado para combate direto, escalada física e transporte de equipamentos pesados.",initial:["ϟ -1 de Agilidade","⬡ +3 de Constituição","⌁ Ossos do ofício: partes do corpo não vitais com HP zerado pela primeira vez não são destruídas e ficam em estado Fraturado até serem curadas."],level:["⬡ +2 de Constituição"],milestone:["⬡ +6 de Constituição","◇ -2 de Presença"]},
+{name:"Estrutura Leve",emoji:"◇",category:"Cinético",rarity:"Comum",desc:"Um corpo com baixa massa corporal e excelente relação entre força e peso. Os membros são leves, o centro de gravidade favorece a movimentação e o escalador consegue percorrer grandes distâncias sem desperdiçar tantos movimentos.",initial:["◆ +2 de Força","ϟ +3 de Agilidade","⬡ -3 de Constituição"],level:["ϟ +2 de Agilidade"],milestone:["◆ +1 de Força","ϟ +5 de Agilidade","⬡ -2 de Constituição"]},
+{name:"Musculatura Compacta",emoji:"▣",category:"Fortificado",rarity:"Comum",desc:"Apresenta músculos densos, tronco firme e um centro de gravidade baixo. Apesar de não possuir necessariamente uma grande estatura, seu corpo é difícil de desequilibrar e eficiente em disputas de contato próximo.",initial:["◆ +1 de Força","ϟ -1 de Agilidade","⬡ +2 de Constituição"],level:["◆ +1 de Força","⬡ +1 de Constituição"],milestone:["◆ +3 de Força","ϟ -1 de Agilidade","⬡ +3 de Constituição"]},
+{name:"Articulações Flexíveis",emoji:"∿",category:"Cinético",rarity:"Comum",desc:"Possui articulações com amplitude de movimento excepcional, musculatura flexível e excelente capacidade de contorção. É ideal para escaladores que dependem de acrobacias, infiltração e movimentos imprevisíveis.",initial:["◆ +2 de Força","ϟ +2 de Agilidade","⬡ -1 de Constituição"],level:["◆ +1 de Força","ϟ +1 de Agilidade"],milestone:["◆ +1 de Força","ϟ +1 de Agilidade","⬡ -1 de Constituição","⊕ +3 em uma perícia aleatória acrobática ou de movimento. Ignora level cap."]},
+{name:"Derme Reforçada",emoji:"⛨",category:"Fortificado",rarity:"Incomum",desc:"A pele e os tecidos superficiais possuem resistência acima da média, formando uma camada protetora natural. A aparência pode variar de uma pele discretamente espessa a uma superfície endurecida, dependendo da raça e da origem do escalador.",initial:["⛨ +2 de defesa inicial, somando-se com qualquer outra sobreposta.","⬡ +2 de Constituição","◇ +1 de Presença"],level:["⬡ +1 de Constituição","◇ +1 de Presença"],milestone:["⬡ +2 de Constituição","ϟ -1 de Agilidade","⊕ +1d8 de vitalidade máxima em todas as partes do corpo não vitais."]},
+{name:"Reflexos Condicionados",emoji:"ϟ",category:"Especializado",rarity:"Comum",desc:"O sistema nervoso apresenta velocidade de resposta excepcional. Seus músculos reagem rapidamente aos estímulos, permitindo movimentos defensivos e ajustes corporais em frações de segundo.",initial:["◎ +2 de Intuição","ϟ +2 de Agilidade","⬡ -1 de Constituição","◆ -1 de Força"],level:["◎ +1 de Intuição","ϟ +1 de Agilidade"],milestone:["⬡ -1 de Constituição","ϟ +3 de Agilidade","◎ +4 de Intuição","◆ -1 de Força"]},
+{name:"Tendões de Mola",emoji:"≫",category:"Cinético",rarity:"Incomum",desc:"Os tendões apresentam elasticidade sobrenatural, permitindo armazenar e liberar energia mecânica durante corridas, saltos e movimentos explosivos. Seu potencial é especialmente útil para escaladores que exploram a verticalidade da Torre.",initial:["⬡ -1 de Constituição","ϟ +2 de Agilidade"],level:["ϟ +1 de Agilidade","⊕ +1 em uma perícia aleatória de movimentação ou salto. Ignora level cap."],milestone:["⬡ -1 de Constituição","ϟ +3 de Agilidade","◆ +3 de Força"]},
+{name:"Inserção Muscular Favorável",emoji:"◆",category:"Dominante",rarity:"Incomum",desc:"A disposição dos músculos e dos pontos de inserção dos tendões favorece a produção de força em movimentos específicos. Não precisa ser um corpo volumoso: a principal vantagem está na eficiência mecânica.",initial:["◆ +5 de Força","ϟ -2 de Agilidade"],level:["◆ +2 de Força"],milestone:["◆ +5 de Força","ϟ -1 de Agilidade","⊕ +1 em uma perícia aleatória relacionada a Força, Padrões exaustivos ou Destreza muscular. Ignora level cap."]},
+{name:"Sistema Neuromuscular de Sobrecarga",emoji:"✹",category:"Especializado",rarity:"Raro",desc:"O organismo consegue recrutar uma quantidade extraordinária de fibras musculares em momentos críticos, produzindo explosões de força acima do limite habitual do personagem. Ideal para quem prefere decidir um combate com movimentos intensos e precisos.",initial:["◆ +4 de Força","⬡ -2 de Vitalidade máxima em todos os membros","✹ Carburante: uma vez por descanso longo, pode trocar metade do HP de um membro e -5 de sanidade para realizar uma ação com ele imediatamente após essa resultar em erro crítico."],level:["◆ +3 de Força"],milestone:["◆ +6 de Força","ϟ -1 de Agilidade","⬡ -1 de Constituição"]},
+{name:"Visão de Longo Alcance",emoji:"◎",category:"Especializado",rarity:"Comum",desc:"Os olhos possuem capacidade excepcional de focalização à distância, permitindo identificar detalhes, movimentos e mudanças no ambiente que passariam despercebidos por outros escaladores.",initial:["◎ +4 de Intuição","⬡ -2 de Constituição"],level:["◎ +2 de Intuição"],milestone:["◎ +6 de Intuição","⬡ -1 de Constituição"]},
+{name:"Metabolismo Econômico",emoji:"◌",category:"Adaptativo",rarity:"Comum",desc:"O organismo consome recursos de maneira excepcionalmente eficiente, mantendo suas funções vitais com menor gasto energético. É adequado para sobrevivência, expedições e andares que restringem alimentos ou recursos.",initial:["◎ -2 de Intuição","⬡ +2 de Constituição","◌ Preguiçoso: os benefícios de um descanso longo são acessíveis por um descanso curto."],level:["⬡ +1 de Constituição","≋ +1d4 de Estamina máxima"],milestone:["⬡ +3 de Constituição","≋ +1d12 de Estamina máxima","◎ -1 de Intuição","⌘ -1 de Conhecimento"]},
+{name:"Ambidestria Absoluta",emoji:"Ⅱ",category:"Especializado",rarity:"Comum",desc:"As duas mãos apresentam coordenação e destreza equivalentes, permitindo manipular ferramentas, armas e objetos com qualquer uma delas. O escalador consegue alternar tarefas manuais sem perder tanta precisão.",initial:["◆ -1 de Força","◎ +3 de Intuição","⊘ Duplo: obtém a capacidade de usar duas ferramentas ou armas em combate."],level:["⬡ +1 de Constituição","◎ +1 de Intuição"],milestone:["⊕ +3 em uma perícia relacionada a destreza manual e técnicas duplas. Ignora level cap.","◎ +2 de Intuição","⬡ +2 de Constituição","◆ -1 de Força"]},
+{name:"Regeneração Superficial",emoji:"⟳",category:"Anômalo",rarity:"Comum",desc:"A pele e os tecidos superficiais apresentam recuperação ligeiramente acelerada. Pequenos arranhões, abrasões e lesões leves cicatrizam mais rapidamente, embora ferimentos graves continuem perigosos.",initial:["⬡ +1 de Constituição","⊙ Regeneração parcial: quando estiver com até -7 de HP em qualquer parte do corpo, regenera 1 de HP por turno."],level:["⬡ +2 de Constituição"],milestone:["⊙ A regeneração parcial aumenta em 1 para a regeneração e para a amplitude de regeneração.","⬡ +4 de Constituição","◇ -2 de Presença"]},
+{name:"Hemostasia Sobrenatural",emoji:"⬡",category:"Anômalo",rarity:"Raro",desc:"O organismo possui mecanismos sobrenaturais de coagulação e controle de hemorragias. Os vasos sanguíneos reagem rapidamente a lesões, reduzindo a perda de sangue e permitindo que o escalador permaneça funcional por mais tempo após determinados ferimentos.",initial:["⬡ +4 de Constituição","◆ -1 de Força","⊙ Sangria: sangramentos aplicados com até -7 de dano não causarão dano em você."],level:["⬡ +2 de Constituição"],milestone:["⬡ +7 de Constituição","◆ -2 de Força"]},
+{name:"Metabolismo Explosivo",emoji:"≫",category:"Cinético",rarity:"Incomum",desc:"O organismo converte reservas energéticas em potência muscular com extrema rapidez. Diferentemente dos físicos de resistência prolongada, este é voltado para arrancadas, mudanças bruscas de direção e ações físicas intensas de curta duração.",initial:["ϟ +2 de Agilidade","◆ +2 de Força","≋ One Step: pode utilizar 100% da estamina para garantir três acertos críticos em combate, durante turnos diferentes.","≋ -1d12 de Estamina máxima"],level:["ϟ +2 de Agilidade"],milestone:["ϟ +3 de Agilidade","◆ +3 de Força","≋ -4 de Estamina máxima"]},
+{name:"Ressonância Sensorial",emoji:"⌖",category:"Especializado",rarity:"Raro",desc:"O organismo consegue integrar informações provenientes de diferentes sentidos com precisão extraordinária. Pequenas alterações no som, na pressão do ar, nas vibrações e na movimentação do ambiente são combinadas em uma percepção corporal mais completa.",initial:["◎ +2 de Intuição","⌘ +2 de Conhecimento","△ -1d4+2 de Sanidade máxima"],level:["◎ +1 de Intuição","⌘ +1 de Conhecimento"],milestone:["◎ +4 de Intuição","⌘ +3 de Conhecimento","△ -4 de Sanidade máxima"]},
+{name:"Fluxo Energético",emoji:"⟡",category:"Anômalo",rarity:"Raro",desc:"Os tecidos corporais conduzem a energia da Torre de maneira extraordinariamente eficiente. A circulação energética acompanha o sistema muscular e nervoso, permitindo executar habilidades com menor desperdício e controlar melhor a energia que percorre o corpo.",initial:["◎ +1 de Intuição","⌘ +1 de Conhecimento","⟐ +1d12 de Karma máximo"],level:["◎ +1 de Intuição","⌘ +1 de Conhecimento","⟐ +5 de Karma máximo"],milestone:["◎ +4 de Intuição","⌘ +1 de Conhecimento","⟐ +1d20 de Karma máximo","⬡ -2 de Constituição máxima"]},
+{name:"Corpo Primordial",emoji:"✦",category:"Anômalo",rarity:"Lendário",desc:"Uma configuração corporal extremamente rara, que parece obedecer a leis anteriores à própria Torre. O organismo apresenta um potencial de desenvolvimento excepcional e consegue transformar treinamento, experiência e desafios extremos em aprimoramentos corporais incomuns.",initial:["▤ +1 em todos os Status","◉ Autoridade Prístina: recebe -2 de todos os tipos de dano existentes na Torre, além de imunidade total a autoridades divinas e magia temporal."],level:["◎ +1 de Intuição","◆ +1 de Força","⬡ +1 de Constituição","ϟ +1 de Agilidade"],milestone:["▤ +2 em todos os Status, exceto sorte","◉ A resistência de Autoridade Prístina aumenta em +1."]},
+{name:"Filtro Biológico",emoji:"⚗",category:"Adaptativo",rarity:"Incomum",desc:"Fígado, rins e outros sistemas de filtragem possuem eficiência elevada para processar determinadas substâncias. A resistência a venenos, toxinas e impurezas é extremamente alta, tornando-o capaz de eliminar mais facilmente contaminações e resistir a certos efeitos de status.",initial:["⬡ +2 de Constituição","⚗ Overdose: -5 de dano de venenos e tóxicos. Ao passar em um teste de Constituição contra dano de veneno maior que sua resistência, adquire um aumento de +4 de dano por um turno."],level:["⬡ +2 de Constituição"],milestone:["⬡ +5 de Constituição","▰ -2 de Vitalidade do Tórax"]},
+{name:"Termorregulação Adaptativa",emoji:"◉",category:"Adaptativo",rarity:"Incomum",desc:"O organismo ajusta a circulação, a transpiração e a produção de calor com eficiência extraordinária. Permite adaptação a ambientes frios e quentes, mas não concede resistência automática aos respectivos efeitos de status.",initial:["⬡ +2 de Constituição","◉ Adaptação térmica: -5 de dano de congelamento ou queimadura, mas não ambos ao mesmo tempo. +2 em testes relacionados à resistência em ambientes frios ou quentes."],level:["⬡ +2 de Constituição"],milestone:["⬡ +4 de Constituição","▰ +2 de Vitalidade nos membros","◆ -2 de Força"]},
+{name:"Linhagem do Pioneiro",emoji:"♛",category:"Adaptativo",rarity:"Lendário",desc:"Um físico mítico, associado às primeiras entidades e humanos que desafiaram a Torre. A estrutura corporal parece reconhecer os princípios fundamentais que governam a subida, o esforço e a superação dos limites físicos. Seu potencial está em transformar experiências extremas em crescimento permanente.",initial:["▤ +1 em todos os Status","✦ Crescimento Potencial: recebe o dobro de experiência em combates e missões. O level cap para perícias pode ser ignorado."],level:["✧ +1 de Anseio","◆ +1 de Força","⬡ +1 de Constituição","⌘ +1 de Conhecimento"],milestone:["▤ +2 em todos os Status, exceto sorte","▣ Pode pegar até duas perícias de outras classes comuns."]},
+{name:"Gigantismo Proporcional",emoji:"▰",category:"Dominante",rarity:"Incomum",desc:"O escalador apresenta estatura elevada e proporções corporais adaptadas para suportar uma massa maior. Seus membros oferecem maior alcance e sua presença física pode intimidar adversários menores.",initial:["⬡ +1 de Constituição","⬡ +4 de Vitalidade máxima em todas as partes do corpo"],level:["⬡ +2 de Constituição"],milestone:["⬡ +3 de Constituição","⬡ +1d10 de Vitalidade máxima em todas as partes do corpo."]},
+{name:"Corpo Anfíbio",emoji:"≋",category:"Anômalo",rarity:"Incomum",desc:"O organismo apresenta adaptações respiratórias sobrenaturais que permitem aproveitar o oxigênio de maneira incomum. Pode possuir membranas respiratórias auxiliares, maior eficiência de troca gasosa ou capacidade de respirar em ambientes aquáticos.",initial:["◆ +1 de Força","⬡ +1 de Constituição","≋ Anfíbio: respira na terra e embaixo d'água, além de não enfrentar penalidades de movimentação em ambientes aquáticos.","◇ -1 de Presença"],level:["◆ +1 de Força","⬡ +1 de Constituição"],milestone:["◆ +3 de Força","⬡ +2 de Constituição","≋ +1d4 de Estamina","◇ -1 de Presença"]},
+{name:"Sobrevivência Responsiva",emoji:"⌁",category:"Adaptativo",rarity:"Incomum",desc:"O portador possui capacidade inata de resistir bem às mudanças externas sofridas dentro da Torre e transformá-las em resistência. Não começa com bônus extraordinários, mas possui grande capacidade de sobrevivência e continuidade.",initial:["✧ +1 de Anseio","✦ Dádiva da Sobrevivência: quando sobrevive a condições de quase morte, adquire +1 de resistência àquele respectivo dano ou efeito de status que ocasionaria sua morte."],level:["✧ +2 de Anseio"],milestone:["✧ +4 de Anseio","◆ +1 de Força","⬡ +1 de Constituição","◇ -1 de Presença"]}
+];
+
+const pages = {
+ inicio: () => `<section class="section">
+  <div class="section-head"><div><div class="section-kicker">SYSTEM DASHBOARD // VISÃO GERAL</div><h2>Central do Escalador</h2><div class="sub">Terminal de acesso aos registros conhecidos da Grande Torre.</div></div><div class="count">DATABASE // ONLINE</div></div>
+  <div class="dashboard-top">
+   <article class="mission-screen"><div class="mission-head"><div class="mission-label"><span class="mission-icon">${svgIcon('alert','ui-icon lg')}</span><span>QUEST INFO // ARQUIVO DO ESCALADOR</span></div><span class="live-tag"><i class="live-dot"></i> CONEXÃO ATIVA</span></div>
+    <h3>PROTOCOLO DE ASCENSÃO INICIADO</h3><p>Os registros iniciais do Sistema foram liberados. Consulte a origem da Torre, conheça as características físicas disponíveis e prepare os próximos módulos da sua jornada.</p>
+    <div class="mission-objective"><div><div class="objective-title">OBJETIVO ATUAL</div><div class="objective-text">Acessar os arquivos disponíveis e compreender os fundamentos da escalada dimensional.</div></div><div class="objective-code">TASK // 001</div></div>
+   </article>
+   <aside class="system-aside"><div class="aside-kicker">REGISTRO DE SINCRONIZAÇÃO</div><h3>ARQUIVO DA TORRE</h3><p>Dois módulos possuem registros consultáveis nesta versão. Os demais espaços permanecem reservados para futuras expansões do compêndio.</p><div class="module-progress"><span></span></div><div class="physical-meta"><span>CONTEÚDO LIBERADO</span><strong>02 / 05 MÓDULOS</strong></div><div class="status-line"><i class="live-dot"></i> SINCRONIZAÇÃO ESTÁVEL</div></aside>
+  </div>
+  <div class="module-grid">
+   <button class="module-card" data-go="introducao"><span class="module-status">OPEN</span><span class="module-icon">${svgIcon('tower')}</span><b>Introdução</b><small>Origem, Sistema e história da Torre</small></button>
+   <button class="module-card" data-go="mecanicas"><span class="module-status">LOCKED</span><span class="module-icon">${svgIcon('sliders')}</span><b>Mecânicas</b><small>Regras, testes e funcionamento</small></button>
+   <button class="module-card" data-go="fisicos"><span class="module-status">OPEN</span><span class="module-icon">${svgIcon('body')}</span><b>Físicos</b><small>25 registros de estruturas corporais</small></button>
+   <button class="module-card" data-go="classes"><span class="module-status">LOCKED</span><span class="module-icon">${svgIcon('layers')}</span><b>Classes</b><small>Tipos, arquétipos e habilidades</small></button>
+   <button class="module-card" data-go="tracos"><span class="module-status">LOCKED</span><span class="module-icon">${svgIcon('diamond')}</span><b>Traços</b><small>Características e particularidades</small></button>
+  </div>
+ </section>`,
+ fisicos: () => `<section class="section"><div class="section-head"><div><div class="section-kicker">CHARACTER DATABASE // BODY TYPE</div><h2>Físicos</h2><div class="sub">Estruturas corporais, aptidões naturais e características especiais dos escaladores.</div></div><div class="count" id="physicalCount">25 REGISTROS</div></div>
+  <div class="toolbar"><div class="search">${svgIcon('search')}<input id="searchInput" type="search" placeholder="Buscar físico, categoria, raridade ou efeito..." aria-label="Buscar físicos"></div><select id="categoryFilter" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select><select id="rarityFilter" aria-label="Filtrar por raridade"><option value="">Todas as raridades</option><option>Comum</option><option>Incomum</option><option>Raro</option><option>Lendário</option></select><button class="tool-btn" id="toggleAllBtn">${svgIcon('plus')} Expandir todos</button><button class="tool-btn" id="resetBtn">Limpar filtros</button></div>
+  <div class="physical-meta"><span>REGISTROS AGRUPADOS POR RARIDADE · DO COMUM AO LENDÁRIO</span><strong>25 ARQUIVOS INDEXADOS</strong></div><div class="physical-grid" id="physicalGrid"></div></section>`,
+ introducao: () => `<section class="section intro-section">
+ <div class="section-head"><div><div class="section-kicker">WORLD DATABASE // ORIGEM E REGISTROS</div><h2>A Grande Torre</h2><div class="sub">O que se sabe sobre a estrutura, o Sistema e aqueles que ousam escalá-la.</div></div><div class="count">ARQUIVO HISTÓRICO // 01</div></div>
+ <div class="lore-feature"><div class="lore-index">REGISTRO 001 <span>DOCUMENTADO</span></div><div class="lore-feature-title"><span class="lore-sigil">${svgIcon('tower')}</span><div><small>ANOMALIA PLANETÁRIA</small><h3>A GRANDE TORRE</h3></div></div>
+ <p>Há pouco mais de um século, objetos estranhos — cilíndricos, alongados e de proporções titânicas — foram fincados na superfície do planeta como estacas de metal. Ao longo dos anos, estudos foram realizados ao redor dessas estruturas enigmáticas, chamadas de <strong>Torres</strong>. Elas não podiam ser destruídas ou movidas e, embora começassem em bases localizadas cerca de três quilômetros abaixo do solo, não apresentavam um fim visível. Observadas do espaço, sequer apareciam.</p>
+ <p>Pequenos eventos sobrenaturais ocorriam em suas proximidades. Equipamentos e veículos paravam de funcionar, e as distorções se tornavam cada vez mais intensas conforme alguém subia. Pouco se descobriu nos primeiros dois anos — até que uma pessoa, sem qualquer equipamento especial, decidiu tentar escalar uma das estruturas usando apenas as próprias mãos.</p></div>
+ <div class="lore-grid">
+  <article class="lore-panel"><div class="lore-panel-head"><span class="lore-sigil">${svgIcon('database')}</span><div><small>REGISTRO 002</small><h3>ESCALADORES</h3></div></div>
+   <p>Não existe registro confiável sobre a identidade da primeira pessoa a escalar a Torre. Mas, após a primeira ascensão, qualquer indivíduo que entrasse na área de efeito da estrutura passava a visualizar uma <strong>tela de Sistema</strong>, apresentada no idioma que compreendesse.</p>
+   <p>A primeira mensagem registrada foi simples e objetiva:</p>
+   <div class="system-message"><div class="system-message-top"><span>${svgIcon('quest')} NOTIFICAÇÃO DO SISTEMA</span><i>REGISTRO 01</i></div><p>“O primeiro andar foi concluído, aguardando novos desafiantes.”</p><div class="system-record">1° ANDAR <span>•</span> 1° Azmult <span>(14 dias)</span></div></div>
+   <p>Outras pessoas seguiram o exemplo e começaram a subir pelas extremidades da estrutura. Ao alcançar determinada altura, distorções dimensionais transportavam os escaladores para ambientes desconhecidos, nos quais o painel de Sistema era seu principal meio de orientação. Ainda era possível retornar ao mundo comum com o auxílio do próprio Sistema, levando consigo tudo aquilo que tivesse sido coletado.</p>
+   <p>Os perigos eram desconhecidos, mas as descobertas também traziam possibilidades tecnológicas extraordinárias. A escalada tornou-se uma profissão reconhecida e valorizada. Em homenagem aos pioneiros, aqueles que desafiam a estrutura passaram a ser chamados de <strong>Escaladores</strong>.</p>
+  </article>
+  <article class="lore-panel"><div class="lore-panel-head"><span class="lore-sigil">${svgIcon('layers')}</span><div><small>REGISTRO 003</small><h3>MESTIÇOS</h3></div></div>
+   <p>Ao longo de um século desde o surgimento da Torre, escaladores estabeleceram relações com raças originárias das dimensões exteriores. Os seres que habitam essas dimensões não possuem acesso ao Sistema de Escaladores e, por isso, não podem descer livremente entre os andares nem retornar à Terra.</p>
+   <p>Entretanto, os descendentes da união entre escaladores e indivíduos dessas raças recebem os mesmos direitos de um escalador pleno. Assim surgiram os <strong>Mestiços</strong>: indivíduos nascidos fora da Torre, cuja herança sobrenatural concede habilidades relacionadas à sua linhagem.</p>
+   <div class="system-note"><span class="note-sigil">${svgIcon('spark')}</span><p><strong>Herança dimensional</strong><br>As características e capacidades de cada mestiço variam conforme a proporção de genes externos presente em seu DNA.</p></div>
+  </article>
+ </div>
+ <div class="lore-feature legacy-feature"><div class="lore-index">REGISTRO 004 <span>PROGRESSÃO</span></div><div class="lore-feature-title"><span class="lore-sigil">${svgIcon('layers')}</span><div><small>MARCO DE ASCENSÃO</small><h3>RUÍNA LEGADO & FORMAÇÃO DE PARTY</h3></div></div>
+  <p>Após explorar cinco níveis dimensionais, os escaladores podem selecionar uma <strong>Classe</strong> de determinado tipo na primeira <strong>Ruína Legado</strong>. Esse marco representa uma mudança importante na progressão dos personagens: as classes foram concebidas para se complementar, e não para atuar isoladamente.</p>
+  <p>Avançar até o quinto nível sem formar uma <strong>Party</strong> é impossível. Por isso, grupos equilibrados são essenciais: cada integrante deve contribuir com capacidades que cubram as limitações dos demais.</p>
+  <div class="party-flow"><span>ESCALADORES</span><b>${svgIcon('arrow')}</b><span>PARTY</span><b>${svgIcon('arrow')}</b><span>RUÍNA LEGADO</span><b>${svgIcon('arrow')}</b><span>CLASSE</span></div>
+ </div>
+ </section>`,
+ mecanicas: () => emptyPage("Mecânicas","SYSTEM MODULE","Regras fundamentais, testes, atributos, combate, progressão e demais sistemas serão adicionados neste módulo.","sliders"),
+ classes: () => emptyPage("Classes","CLASS ARCHIVE","Classes, caminhos de especialização, habilidades e progressões estarão disponíveis aqui em futuras atualizações.","layers"),
+ tracos: () => emptyPage("Traços","TRAIT ARCHIVE","Traços positivos e negativos, suas categorias, custos e efeitos serão catalogados aqui.","diamond")
+};
+function emptyPage(title,kicker,desc,symbol){return `<section class="section"><div class="section-head"><div><div class="section-kicker">${kicker}</div><h2>${title}</h2></div></div><div class="empty"><span class="symbol">${svgIcon(symbol,'ui-icon xl')}</span><h3>REGISTRO AINDA NÃO DISPONÍVEL</h3><p>${desc}</p></div></section>`}
+function renderPhysicals(){
+ const grid=document.getElementById('physicalGrid'); if(!grid)return;
+ const q=(document.getElementById('searchInput')?.value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const cat=document.getElementById('categoryFilter')?.value||'', rar=document.getElementById('rarityFilter')?.value||'';
+ let list=physiques.filter(p=>(!cat||p.category===cat)&&(!rar||p.rarity===rar)&&(!q||[p.name,p.category,p.rarity,p.desc,...p.initial,...p.level,...p.milestone].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q)));
+ const rarityOrder={'Comum':0,'Incomum':1,'Raro':2,'Lendário':3};
+ list.sort((a,b)=>(rarityOrder[a.rarity]??99)-(rarityOrder[b.rarity]??99)||physiques.indexOf(a)-physiques.indexOf(b));
+ document.getElementById('physicalCount').textContent=`${list.length} / ${physiques.length} REGISTROS`;
+ grid.innerHTML=list.map((p,i)=>`<details class="physical-card" data-slug="${slugify(p.name)}" id="physical-capture-${i}" ${i===0?'open':''}><summary class="card-top"><span class="card-title"><span class="type-glyph">${svgIcon(CATEGORY_ICON[p.category]||'circle')}</span><span>${p.name}</span></span><span class="card-controls"><button class="card-expand" type="button" data-toggle-card aria-label="${i===0?'Recolher':'Expandir'} informações de ${p.name}" aria-expanded="${i===0}" title="${i===0?'Recolher':'Expandir'} informações"><span class="expand-mark" aria-hidden="true"></span></button><button class="card-share" type="button" data-share-card title="Compartilhar imagem deste físico" aria-label="Compartilhar imagem de ${p.name}">${svgIcon('share')}</button><span class="pill rarity-${p.rarity.toLowerCase()}">${p.rarity}</span><span class="pill">${p.category}</span></span></summary><div class="card-body"><p class="description">${p.desc}</p><div class="bonus-grid"><div class="bonus-box"><h4>${svgIcon('plus')} Bônus iniciais</h4><ul>${p.initial.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('target')} Por nível</h4><ul>${p.level.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('layers')} A cada 5 níveis</h4><ul>${p.milestone.map(statLine).join('')}</ul></div></div></div></details>`).join('')||`<div class="empty" style="grid-column:1/-1"><span class="symbol">${svgIcon('search','ui-icon xl')}</span><h3>NENHUM REGISTRO ENCONTRADO</h3><p>Tente alterar os termos da busca ou os filtros.</p></div>`;
+ grid.querySelectorAll('.physical-card').forEach(card=>{card.addEventListener('toggle',()=>syncCardToggle(card));syncCardToggle(card)});
+}
+function syncCardToggle(card){const button=card.querySelector('[data-toggle-card]');if(button){button.setAttribute('aria-expanded',String(card.open));const action=card.open?'Recolher':'Expandir';button.setAttribute('aria-label',`${action} informações de ${card.querySelector('.card-title span:last-child')?.textContent||'físico'}`);button.title=`${action} informações`;}}
+function navigate(page){
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+ document.getElementById('pageContent').innerHTML=pages[page]();
+ if(page==='fisicos'){
+  ensureHtml2Canvas().catch(()=>{});
+  const sel=document.getElementById('categoryFilter');
+  [...new Set(physiques.map(p=>p.category))].sort().forEach(c=>sel.add(new Option(c,c)));
+  document.getElementById('searchInput').addEventListener('input',renderPhysicals);
+  sel.addEventListener('change',renderPhysicals);
+  document.getElementById('rarityFilter').addEventListener('change',renderPhysicals);
+  document.getElementById('toggleAllBtn').addEventListener('click',()=>{const cards=[...document.querySelectorAll('.physical-card')];const shouldOpen=cards.some(c=>!c.open);cards.forEach(c=>{c.open=shouldOpen;syncCardToggle(c)});document.getElementById('toggleAllBtn').innerHTML=`${svgIcon(shouldOpen?'layers':'plus')} ${shouldOpen?'Recolher todos':'Expandir todos'}`});
+  document.getElementById('resetBtn').addEventListener('click',()=>{document.getElementById('searchInput').value='';sel.value='';document.getElementById('rarityFilter').value='';renderPhysicals()});
+  renderPhysicals();
+ }
+ fillIcons(document.getElementById('pageContent'));
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
+document.getElementById('pageContent').addEventListener('click',e=>{const toggle=e.target.closest('[data-toggle-card]');if(toggle){e.preventDefault();e.stopPropagation();const card=toggle.closest('.physical-card');if(card){card.open=!card.open;syncCardToggle(card)}return}const share=e.target.closest('[data-share-card]');if(share){e.preventDefault();e.stopPropagation();sharePhysicalCard(share);return}const b=e.target.closest('[data-go]');if(b)navigate(b.dataset.go)});
+document.getElementById('themeBtn').innerHTML=svgIcon('glow');
+document.getElementById('brandGlyph').innerHTML=svgIcon('tower','ui-icon lg');
+document.getElementById('heroFactTower').innerHTML=svgIcon('tower');
+document.getElementById('heroFactRecords').innerHTML=svgIcon('database');
+document.getElementById('heroFactStatus').innerHTML=svgIcon('circle');
+document.getElementById('themeBtn').addEventListener('click',()=>{document.body.classList.toggle('quiet-mode');document.getElementById('themeBtn').innerHTML=svgIcon(document.body.classList.contains('quiet-mode')?'circle':'glow');document.getElementById('themeBtn').title=document.body.classList.contains('quiet-mode')?'Ativar efeitos de iluminação':'Reduzir efeitos de iluminação';toast(document.body.classList.contains('quiet-mode')?'Iluminação reduzida.':'Iluminação ativada.')});
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+let html2canvasLoader=null;
+function ensureHtml2Canvas(){
+ if(window.html2canvas)return Promise.resolve(window.html2canvas);
+ if(html2canvasLoader)return html2canvasLoader;
+ html2canvasLoader=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  script.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  script.crossOrigin='anonymous';
+  script.onload=()=>window.html2canvas?resolve(window.html2canvas):reject(new Error('Biblioteca de captura indisponível.'));
+  script.onerror=()=>reject(new Error('Não foi possível carregar a biblioteca de captura.'));
+  document.head.appendChild(script);
+ }).catch(error=>{html2canvasLoader=null;throw error});
+ return html2canvasLoader;
+}
+// Pré-carrega a captura antes que o usuário acione o compartilhamento.
+ensureHtml2Canvas().catch(()=>{});
+function canvasToBlob(canvas,type='image/png'){
+ return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Falha ao gerar PNG.')),type));
+}
+function downloadBlob(blob,filename){
+ const url=URL.createObjectURL(blob);const link=document.createElement('a');
+ link.download=filename;link.href=url;document.body.appendChild(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+function slugify(value){return String(value||'fisico').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'fisico'}
+
+async function sharePhysicalCard(button){
+ const card=button.closest('.physical-card');
+ if(!card||button.dataset.state==='busy')return;
+ const wasOpen=card.open;
+ const captureId=card.id;
+ const title=card.querySelector('.card-title span:last-child')?.textContent||'Físico';
+ const filename=`${slugify(title)}.png`;
+ button.disabled=true;button.dataset.state='busy';button.classList.add('is-sharing');
+ card.open=true;
+ try{
+  // A biblioteca é pré-carregada ao abrir o portal para reduzir a espera após o clique.
+  const capture=await ensureHtml2Canvas();
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const canvas=await capture(card,{
+   backgroundColor:'#030a13',scale:2,useCORS:true,allowTaint:false,logging:false,
+   onclone:clonedDoc=>{
+    const clonedCard=clonedDoc.getElementById(captureId);
+    if(clonedCard){
+     clonedCard.open=true;
+     clonedCard.querySelectorAll('[data-share-card],[data-toggle-card]').forEach(control=>control.remove());
+    }
+   }
+  });
+  const blob=await canvasToBlob(canvas,'image/png');
+  const file=new File([blob],filename,{type:'image/png',lastModified:Date.now()});
+
+  // Igual ao repositório de referência: compartilha o arquivo pelo menu nativo
+  // quando o navegador/sistema aceita arquivos; caso contrário, baixa o PNG.
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+   try{
+    await navigator.share({files:[file],title:`${title} · A Grande Torre`});
+    toast('Imagem enviada ao compartilhamento do dispositivo.');
+    button.dataset.state='done';
+   }catch(error){
+    if(error?.name==='AbortError'){
+     toast('Compartilhamento cancelado.');
+     button.dataset.state='cancelled';
+    }else{
+     throw error;
+    }
+   }
+  }else{
+   downloadBlob(blob,filename);
+   toast('Este navegador não oferece compartilhamento nativo de arquivos. PNG baixado.');
+   button.dataset.state='downloaded';
+  }
+ }catch(error){
+  console.error('Falha ao gerar/compartilhar imagem do físico:',error);
+  toast('Não foi possível preparar o compartilhamento. Tente novamente.');
+  button.dataset.state='error';
+ }finally{
+  card.open=wasOpen;
+  button.disabled=false;
+  button.classList.remove('is-sharing');
+  setTimeout(()=>{if(button.isConnected)delete button.dataset.state},1400);
+ }
+}
+
+// Partículas suaves que nascem no centro e se dispersam até as laterais.
+(function startEmberField(){
+ const canvas=document.getElementById('emberField');
+ if(!canvas)return;
+ const ctx=canvas.getContext('2d');
+ if(!ctx)return;
+ const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ let width=0,height=0,dpr=1,particles=[],lastTime=0,frame=0;
+ const random=(min,max)=>min+Math.random()*(max-min);
+ function maxDistance(angle){
+  const dx=Math.cos(angle),dy=Math.sin(angle);
+  const tx=Math.abs(dx)<.0001?Infinity:(width*.5)/Math.abs(dx);
+  const ty=Math.abs(dy)<.0001?Infinity:(height*.5)/Math.abs(dy);
+  return Math.min(tx,ty)*random(.86,1.02);
+ }
+ function makeParticle(){
+  const angle=random(0,Math.PI*2);
+  return {angle,distance:maxDistance(angle),progress:random(0,.16),life:random(13000,24000),drift:random(5,25),phase:random(0,Math.PI*2),radius:random(1.25,2.35),alpha:random(.43,.76)};
+ }
+ function resize(){
+  width=window.innerWidth;height=window.innerHeight;dpr=Math.min(window.devicePixelRatio||1,1.65);
+  canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+  canvas.style.width=width+'px';canvas.style.height=height+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const count=Math.max(14,Math.min(34,Math.round(width*height/48000)));
+  particles=Array.from({length:count},makeParticle);
+  if(reducedMotion)drawStatic();
+ }
+ function position(p,progress){
+  const wobble=Math.sin(progress*7.2+p.phase)*p.drift*progress;
+  const x=width/2+Math.cos(p.angle)*p.distance*progress-Math.sin(p.angle)*wobble;
+  const y=height/2+Math.sin(p.angle)*p.distance*progress+Math.cos(p.angle)*wobble;
+  return {x,y};
+ }
+ function drawStatic(){
+  ctx.clearRect(0,0,width,height);
+  particles.slice(0,18).forEach((p,i)=>{
+   const pos=position(p,.32+(i%5)*.09);ctx.beginPath();ctx.arc(pos.x,pos.y,p.radius,0,Math.PI*2);
+   ctx.fillStyle='rgba(75,184,255,.34)';ctx.shadowColor='#149dff';ctx.shadowBlur=13;ctx.fill();
+  });ctx.shadowBlur=0;
+ }
+ function animate(now){
+  if(document.hidden){frame=0;lastTime=0;return;}
+  const delta=Math.min(48,lastTime?now-lastTime:16);lastTime=now;
+  ctx.clearRect(0,0,width,height);ctx.save();ctx.globalCompositeOperation='lighter';
+  for(let i=0;i<particles.length;i++){
+   const p=particles[i];const previous=position(p,p.progress);
+   p.progress+=delta/p.life;
+   if(p.progress>=1){particles[i]=makeParticle();continue;}
+   const pos=position(p,p.progress);
+   const fadeIn=Math.min(1,p.progress*7),fadeOut=Math.min(1,(1-p.progress)*3.1);
+   const alpha=p.alpha*fadeIn*fadeOut;
+   ctx.beginPath();ctx.moveTo(previous.x,previous.y);ctx.lineTo(pos.x,pos.y);
+   ctx.strokeStyle=`rgba(38,158,255,${alpha*.28})`;ctx.lineWidth=1;ctx.stroke();
+   ctx.beginPath();ctx.arc(pos.x,pos.y,p.radius,0,Math.PI*2);
+   ctx.fillStyle=`rgba(112,218,255,${Math.min(.92,alpha*1.12)})`;ctx.shadowColor='#159dff';ctx.shadowBlur=12+p.radius*6;ctx.fill();
+  }
+  ctx.restore();frame=requestAnimationFrame(animate);
+ }
+ resize();
+ window.addEventListener('resize',resize,{passive:true});
+ document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){if(frame)cancelAnimationFrame(frame);frame=0;}
+  else if(!reducedMotion&&!frame){lastTime=0;frame=requestAnimationFrame(animate);}
+ });
+ if(!reducedMotion)frame=requestAnimationFrame(animate);
+})();
+fillIcons(document);
+const routeParams=new URLSearchParams(location.search);
+const requestedPage=routeParams.get('pagina');
+navigate(requestedPage==='fisicos'?'fisicos':'inicio');
+if(requestedPage==='fisicos'){
+ const targetSlug=routeParams.get('fisico');
+ if(targetSlug)setTimeout(()=>{
+  const target=[...document.querySelectorAll('.physical-card')].find(card=>card.dataset.slug===targetSlug);
+  if(target){target.open=true;syncCardToggle(target);target.scrollIntoView({behavior:'smooth',block:'center'});}
+ },80);
+}
+</script>
+</body>
+</html>
