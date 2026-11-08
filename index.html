@@ -81,7 +81,9 @@ select{height:40px;min-width:150px;padding:9px 32px 9px 12px;border:1px solid #1
 .card-share{display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;padding:0;border:1px solid #1b5a85;background:linear-gradient(145deg,#0b2a46,#04101d);color:#55caff;box-shadow:inset 0 0 9px #087cff16;transition:.2s;cursor:pointer}
 .card-share .ui-icon{width:14px;height:14px}
 .card-share:hover,.card-share:focus-visible{outline:none;border-color:#5bd7ff;color:#a8eaff;box-shadow:0 0 12px #078cff66,inset 0 0 12px #087cff28}
-.card-share:disabled{opacity:.45;cursor:wait}
+.card-share:disabled{opacity:.58;cursor:wait}
+.card-share.is-preparing .ui-icon{filter:drop-shadow(0 0 5px #28baff);animation:sharePrepPulse 1.1s ease-in-out infinite alternate}
+@keyframes sharePrepPulse{to{opacity:.42;transform:scale(.88)}}
 .card-share.is-sharing{color:#b8eaff;box-shadow:0 0 16px #078cff88}
 .card-controls{position:absolute;z-index:4;top:20px;right:13px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 20px)}
 .card-expand{display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;padding:0;border:0;background:transparent;color:#56bde9;cursor:pointer}
@@ -266,6 +268,7 @@ function renderPhysicals(){
  document.getElementById('physicalCount').textContent=`${list.length} / ${physiques.length} REGISTROS`;
  grid.innerHTML=list.map((p,i)=>`<details class="physical-card" data-slug="${slugify(p.name)}" id="physical-capture-${i}" ${i===0?'open':''}><summary class="card-top"><span class="card-title"><span class="type-glyph">${svgIcon(CATEGORY_ICON[p.category]||'circle')}</span><span>${p.name}</span></span><span class="card-controls"><button class="card-expand" type="button" data-toggle-card aria-label="${i===0?'Recolher':'Expandir'} informações de ${p.name}" aria-expanded="${i===0}" title="${i===0?'Recolher':'Expandir'} informações"><span class="expand-mark" aria-hidden="true"></span></button><button class="card-share" type="button" data-share-card title="Compartilhar imagem deste físico" aria-label="Compartilhar imagem de ${p.name}">${svgIcon('share')}</button><span class="pill rarity-${p.rarity.toLowerCase()}">${p.rarity}</span><span class="pill">${p.category}</span></span></summary><div class="card-body"><p class="description">${p.desc}</p><div class="bonus-grid"><div class="bonus-box"><h4>${svgIcon('plus')} Bônus iniciais</h4><ul>${p.initial.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('target')} Por nível</h4><ul>${p.level.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('layers')} A cada 5 níveis</h4><ul>${p.milestone.map(statLine).join('')}</ul></div></div></div></details>`).join('')||`<div class="empty" style="grid-column:1/-1"><span class="symbol">${svgIcon('search','ui-icon xl')}</span><h3>NENHUM REGISTRO ENCONTRADO</h3><p>Tente alterar os termos da busca ou os filtros.</p></div>`;
  grid.querySelectorAll('.physical-card').forEach(card=>{card.addEventListener('toggle',()=>syncCardToggle(card));syncCardToggle(card)});
+ warmVisibleShareCards(grid);
 }
 function syncCardToggle(card){const button=card.querySelector('[data-toggle-card]');if(button){button.setAttribute('aria-expanded',String(card.open));const action=card.open?'Recolher':'Expandir';button.setAttribute('aria-label',`${action} informações de ${card.querySelector('.card-title span:last-child')?.textContent||'físico'}`);button.title=`${action} informações`;}}
 function navigate(page){
@@ -308,7 +311,9 @@ function ensureHtml2Canvas(){
  }).catch(error=>{html2canvasLoader=null;throw error});
  return html2canvasLoader;
 }
-// Pré-carrega a captura antes que o usuário acione o compartilhamento.
+// A imagem é gerada em segundo plano, antes do clique. Assim, o menu nativo
+// pode ser chamado imediatamente dentro do evento de clique, sem perder a
+// ativação temporária exigida pela Web Share API.
 ensureHtml2Canvas().catch(()=>{});
 function canvasToBlob(canvas,type='image/png'){
  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Falha ao gerar PNG.')),type));
@@ -320,61 +325,198 @@ function downloadBlob(blob,filename){
 }
 function slugify(value){return String(value||'fisico').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'fisico'}
 
-async function sharePhysicalCard(button){
- const card=button.closest('.physical-card');
- if(!card||button.dataset.state==='busy')return;
- const wasOpen=card.open;
- const captureId=card.id;
- const title=card.querySelector('.card-title span:last-child')?.textContent||'Físico';
- const filename=`${slugify(title)}.png`;
- button.disabled=true;button.dataset.state='busy';button.classList.add('is-sharing');
- card.open=true;
+const physicalShareCache=new Map();
+const physicalSharePending=new Map();
+const physicalShareQueue=[];
+let physicalShareWorkerActive=false;
+let physicalShareObserver=null;
+let nativeShareInProgress=false;
+
+function setPhysicalShareState(slug,state){
+ document.querySelectorAll(`.physical-card[data-slug="${slug}"] [data-share-card]`).forEach(button=>{
+  const preparing=state==='preparing';
+  button.disabled=preparing;
+  button.classList.toggle('is-preparing',preparing);
+  button.classList.toggle('is-sharing',state==='sharing');
+  if(state==='ready')button.title='Compartilhar imagem deste físico';
+  else if(state==='preparing')button.title='Preparando imagem para compartilhamento…';
+  else if(state==='error')button.title='Não foi possível preparar. Clique para tentar novamente.';
+  else if(state==='sharing')button.title='Abrindo compartilhamento nativo…';
+ });
+}
+
+function buildShareClone(card){
+ const width=Math.max(280,Math.round(card.getBoundingClientRect().width||card.offsetWidth||560));
+ const stage=document.createElement('div');
+ stage.setAttribute('aria-hidden','true');
+ stage.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;min-width:${width}px;max-width:${width}px;overflow:visible;pointer-events:none;z-index:-1;`;
+ const clone=card.cloneNode(true);
+ clone.open=true;
+ clone.removeAttribute('id');
+ clone.style.width=width+'px';
+ clone.style.maxWidth=width+'px';
+ clone.querySelectorAll('[data-share-card],[data-toggle-card]').forEach(control=>control.remove());
+ stage.appendChild(clone);
+ document.body.appendChild(stage);
+ return {stage,clone,width};
+}
+
+async function createPhysicalShareAsset(card,slug){
+ const capture=await ensureHtml2Canvas();
+ if(document.fonts?.ready)await document.fonts.ready.catch(()=>{});
+ const {stage,clone}=buildShareClone(card);
+ let canvas=null;
  try{
-  // A biblioteca é pré-carregada ao abrir o portal para reduzir a espera após o clique.
-  const capture=await ensureHtml2Canvas();
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  const canvas=await capture(card,{
-   backgroundColor:'#030a13',scale:2,useCORS:true,allowTaint:false,logging:false,
-   onclone:clonedDoc=>{
-    const clonedCard=clonedDoc.getElementById(captureId);
-    if(clonedCard){
-     clonedCard.open=true;
-     clonedCard.querySelectorAll('[data-share-card],[data-toggle-card]').forEach(control=>control.remove());
-    }
-   }
+  canvas=await capture(clone,{
+   backgroundColor:'#030a13',scale:2,useCORS:true,allowTaint:false,logging:false
   });
   const blob=await canvasToBlob(canvas,'image/png');
+  const title=card.querySelector('.card-title span:last-child')?.textContent||'Físico';
+  const filename=`${slug}.png`;
   const file=new File([blob],filename,{type:'image/png',lastModified:Date.now()});
+  return {blob,file,filename,title};
+ } finally{
+  if(canvas){canvas.width=1;canvas.height=1;}
+  stage.remove();
+ }
+}
 
-  // Igual ao repositório de referência: compartilha o arquivo pelo menu nativo
-  // quando o navegador/sistema aceita arquivos; caso contrário, baixa o PNG.
-  if(navigator.canShare&&navigator.canShare({files:[file]})){
-   try{
-    await navigator.share({files:[file],title:`${title} · A Grande Torre`});
-    toast('Imagem enviada ao compartilhamento do dispositivo.');
-    button.dataset.state='done';
-   }catch(error){
-    if(error?.name==='AbortError'){
-     toast('Compartilhamento cancelado.');
-     button.dataset.state='cancelled';
-    }else{
-     throw error;
+function enqueuePhysicalSharePreparation(card){
+ const slug=card.dataset.slug||slugify(card.querySelector('.card-title span:last-child')?.textContent);
+ if(physicalShareCache.has(slug)){
+  setPhysicalShareState(slug,'ready');
+  return Promise.resolve(physicalShareCache.get(slug));
+ }
+ if(physicalSharePending.has(slug))return physicalSharePending.get(slug);
+ setPhysicalShareState(slug,'preparing');
+ let resolveJob,rejectJob;
+ const promise=new Promise((resolve,reject)=>{resolveJob=resolve;rejectJob=reject});
+ physicalSharePending.set(slug,promise);
+ physicalShareQueue.push({card,slug,resolve:resolveJob,reject:rejectJob});
+ processPhysicalShareQueue();
+ return promise;
+}
+
+async function processPhysicalShareQueue(){
+ if(physicalShareWorkerActive)return;
+ physicalShareWorkerActive=true;
+ while(physicalShareQueue.length){
+  const job=physicalShareQueue.shift();
+  try{
+   const asset=await createPhysicalShareAsset(job.card,job.slug);
+   physicalShareCache.set(job.slug,asset);
+   setPhysicalShareState(job.slug,'ready');
+   job.resolve(asset);
+  }catch(error){
+   console.error(`Falha ao preparar imagem de ${job.slug}:`,error);
+   setPhysicalShareState(job.slug,'error');
+   physicalSharePending.delete(job.slug);
+   job.reject(error);
+  }finally{
+   physicalSharePending.delete(job.slug);
+  }
+ }
+ physicalShareWorkerActive=false;
+}
+
+function warmVisibleShareCards(grid){
+ if(physicalShareObserver){physicalShareObserver.disconnect();physicalShareObserver=null;}
+ const cards=[...grid.querySelectorAll('.physical-card')];
+ cards.forEach(card=>{
+  const slug=card.dataset.slug;
+  setPhysicalShareState(slug,physicalShareCache.has(slug)?'ready':'preparing');
+ });
+ // Deixa os primeiros cartões prontos imediatamente; os demais entram na
+ // fila conforme se aproximam da área visível, economizando memória/CPU.
+ cards.slice(0,5).forEach(card=>enqueuePhysicalSharePreparation(card).catch(()=>{}));
+ if('IntersectionObserver' in window){
+  const observer=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>{
+    if(entry.isIntersecting){
+     observer.unobserve(entry.target);
+     enqueuePhysicalSharePreparation(entry.target).catch(()=>{});
     }
+   });
+  },{root:null,rootMargin:'720px 0px',threshold:0.01});
+  physicalShareObserver=observer;
+  cards.slice(5).forEach(card=>{
+   if(!physicalShareCache.has(card.dataset.slug))observer.observe(card);
+  });
+ }else{
+  cards.slice(5).forEach(card=>enqueuePhysicalSharePreparation(card).catch(()=>{}));
+ }
+}
+
+function handleNativeShareResult(button,sharePromise,slug){
+ nativeShareInProgress=true;
+ setPhysicalShareState(slug,'sharing');
+ button.disabled=true;
+ Promise.resolve(sharePromise).then(()=>{
+  toast('Imagem enviada ao compartilhamento do dispositivo.');
+ }).catch(error=>{
+  if(error?.name==='AbortError'){
+   toast('Compartilhamento cancelado.');
+  }else if(error?.name==='InvalidStateError'){
+   toast('Já existe um compartilhamento em andamento. Feche a janela do sistema e tente novamente.');
+  }else if(error?.name==='NotAllowedError'){
+   console.error('Web Share bloqueado pelo navegador:',error);
+   toast('O navegador bloqueou o compartilhamento. A imagem foi baixada.');
+   const asset=physicalShareCache.get(slug);
+   if(asset)downloadBlob(asset.blob,asset.filename);
+  }else{
+   console.error('Falha no compartilhamento nativo:',error);
+   toast('Não foi possível abrir o compartilhamento nativo.');
+  }
+ }).finally(()=>{
+  nativeShareInProgress=false;
+  button.disabled=false;
+  setPhysicalShareState(slug,'ready');
+ });
+}
+
+// Esta função é deliberadamente síncrona até navigator.share(): nenhum await,
+// timer ou captura de imagem ocorre entre o clique e a chamada nativa.
+function sharePhysicalCard(button){
+ const card=button.closest('.physical-card');
+ if(!card)return;
+ const slug=card.dataset.slug||slugify(card.querySelector('.card-title span:last-child')?.textContent);
+ const asset=physicalShareCache.get(slug);
+ if(!asset){
+  if(button.dataset.retrying!=='true'){
+   button.dataset.retrying='true';
+   toast('Preparando a imagem deste físico. O botão será liberado em instantes.');
+   enqueuePhysicalSharePreparation(card).catch(()=>{}).finally(()=>{
+    if(button.isConnected)delete button.dataset.retrying;
+   });
+  }
+  return;
+ }
+ if(nativeShareInProgress){
+  toast('Um compartilhamento já está aberto. Aguarde finalizar.');
+  return;
+ }
+ if(navigator.share&&navigator.canShare){
+  let canShareFiles=false;
+  try{canShareFiles=navigator.canShare({files:[asset.file]});}catch(error){console.warn('Não foi possível validar o arquivo para compartilhamento:',error);}
+  if(canShareFiles){
+   try{
+    // Chamada direta no gesto do usuário para preservar a ativação transitória.
+    const sharePromise=navigator.share({files:[asset.file],title:`${asset.title} · A Grande Torre`});
+    handleNativeShareResult(button,sharePromise,slug);
+   }catch(error){
+    console.error('Falha ao iniciar compartilhamento nativo:',error);
+    if(error?.name==='InvalidStateError')toast('Já existe um compartilhamento em andamento. Aguarde e tente novamente.');
+    else if(error?.name==='NotAllowedError')toast('O navegador bloqueou o compartilhamento.');
+    else toast('Não foi possível iniciar o compartilhamento.');
    }
   }else{
-   downloadBlob(blob,filename);
-   toast('Este navegador não oferece compartilhamento nativo de arquivos. PNG baixado.');
-   button.dataset.state='downloaded';
+   downloadBlob(asset.blob,asset.filename);
+   toast('Este navegador não aceita compartilhar arquivos. PNG baixado.');
   }
- }catch(error){
-  console.error('Falha ao gerar/compartilhar imagem do físico:',error);
-  toast('Não foi possível preparar o compartilhamento. Tente novamente.');
-  button.dataset.state='error';
- }finally{
-  card.open=wasOpen;
-  button.disabled=false;
-  button.classList.remove('is-sharing');
-  setTimeout(()=>{if(button.isConnected)delete button.dataset.state},1400);
+ }else{
+  downloadBlob(asset.blob,asset.filename);
+  toast('Compartilhamento de arquivos indisponível neste navegador. PNG baixado.');
  }
 }
 
