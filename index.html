@@ -69,7 +69,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 select{height:40px;min-width:150px;padding:9px 32px 9px 12px;border:1px solid #16466f;background:#030b15;color:#94b8d2;outline:none;border-radius:0;font-size:11px}.tool-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 12px;border:1px solid #174d78;background:linear-gradient(145deg,#0b2035,#040c17);color:#8ebbd8;font-size:10px;font-weight:800;letter-spacing:.4px;transition:.2s;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px))}.tool-btn .ui-icon{width:15px;height:15px}.tool-btn:hover{border-color:#3bc4ff;color:#c2eaff;box-shadow:0 0 14px #007bff38}
 .physical-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:5px 0 12px;color:#547b99;font:700 9px 'Barlow Condensed';letter-spacing:1.5px}.physical-meta strong{color:#5fcaff;font-weight:800}
 .physical-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;align-items:start}
-.physical-card{position:relative;min-width:0;overflow:hidden;border:1px solid #123e65;background:linear-gradient(145deg,#07172a,#030a13 78%);box-shadow:0 8px 25px #0008,inset 0 0 20px #007bff08;clip-path:polygon(0 12px,12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);transition:border-color .2s,box-shadow .2s}
+.physical-card{position:relative;min-width:0;overflow:hidden;contain:layout style;border:1px solid #123e65;background:linear-gradient(145deg,#07172a,#030a13 78%);box-shadow:0 8px 25px #0008,inset 0 0 20px #007bff08;clip-path:polygon(0 12px,12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);transition:border-color .2s,box-shadow .2s}
 .physical-card:hover{border-color:#218bc9;box-shadow:0 0 0 1px #007bff24,0 0 20px #007bff24,0 8px 25px #0009}
 .card-top{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:67px;padding:14px 228px 14px 15px;border:0;border-bottom:1px solid #103555;background:linear-gradient(90deg,#0b2036aa,transparent);color:inherit;text-align:left;list-style:none;cursor:pointer}
 .card-top::-webkit-details-marker{display:none}.card-title{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%;color:#bad5e7;font:800 20px/1.08 'Barlow Condensed';letter-spacing:.45px}.card-title>span:last-child{min-width:0;overflow-wrap:anywhere}.type-glyph{display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border:1px solid #1c689b;background:#04182b;color:#54cbff;box-shadow:0 0 10px #007bff3d}.type-glyph .ui-icon{width:17px;height:17px}
@@ -94,6 +94,21 @@ select{height:40px;min-width:150px;padding:9px 32px 9px 12px;border:1px solid #1
 .info-panel{padding:21px}.info-panel h3{margin:0 0 9px;color:#b6d1e4;font:700 20px 'Barlow Condensed';letter-spacing:.8px}.info-panel p{margin:0;color:#7997b0;font-size:11px;line-height:1.8}.status-line{display:flex;align-items:center;gap:8px;margin-bottom:12px;color:#49bfff;font-size:9px;font-weight:800;letter-spacing:1.6px}.pulse{width:7px;height:7px;border-radius:50%;background:#37bfff;box-shadow:0 0 8px #37bfff,0 0 16px #007bff;animation:nodePulse 1.8s infinite}
 /* Introdução e registros da Torre */
 .lore-feature,.lore-panel{padding:clamp(18px,3vw,27px)}.lore-feature{margin-bottom:13px;background:radial-gradient(ellipse at 50% 0%,#06427455,transparent 58%),linear-gradient(145deg,#07192c,#030a13 78%)}.lore-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}.lore-index{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px;color:#5789b0;font:700 9px 'Barlow Condensed';letter-spacing:2px}.lore-index span{display:inline-flex;align-items:center;gap:6px;color:#50bdf0}.lore-index span:before{content:"";width:5px;height:5px;border-radius:50%;background:#36baff;box-shadow:0 0 8px #008cff}.lore-feature-title,.lore-panel-head{display:flex;align-items:center;gap:13px;margin-bottom:15px}.lore-sigil{display:grid;place-items:center;flex:0 0 45px;width:45px;height:45px;border:1px solid #2181bb;background:linear-gradient(145deg,#073457,#04101d);color:#66ceff;box-shadow:0 0 14px #007bff3b,inset 0 0 14px #0a8fff23}.lore-sigil .ui-icon{width:23px;height:23px}.lore-feature-title small,.lore-panel-head small{color:#4cb8e9;font-size:8px;font-weight:800;letter-spacing:2px}.lore-feature-title h3,.lore-panel-head h3{margin:3px 0 0;color:#b9d5e8;font:800 24px 'Barlow Condensed';letter-spacing:1.2px}.lore-feature p,.lore-panel p{margin:0 0 12px;color:#819eb6;font-size:11px;line-height:1.85}.lore-feature strong,.lore-panel strong{color:#bad8eb}.system-message{margin:16px 0;padding:15px;border:1px solid #1b6599;background:linear-gradient(110deg,#062b4b,#04101d);box-shadow:0 0 22px #006dff19,inset 0 0 22px #0b84ff0e;position:relative}.system-message:after{content:"";position:absolute;right:0;top:0;width:30px;height:30px;border-top:1px solid #4acaff;border-right:1px solid #4acaff;filter:drop-shadow(0 0 5px #008cff)}.system-message-top{display:flex;justify-content:space-between;gap:8px;color:#4cbfff;font:700 9px 'Barlow Condensed';letter-spacing:1.4px}.system-message-top i{font-style:normal;color:#527f9e}.system-message>p{margin:12px 0 9px;color:#b4d9ee;font:600 16px 'Barlow Condensed';letter-spacing:.4px}.system-record{padding-top:9px;border-top:1px solid #174b71;color:#65caff;font:700 11px 'Barlow Condensed';letter-spacing:1px}.system-record span{margin:0 5px;color:#318fc9}.system-record span:last-child{color:#7699b2}.system-note{display:flex;gap:12px;align-items:flex-start;margin-top:15px;padding:13px;border:1px solid #164a72;background:#061629}.system-note .note-sigil{color:#57c9ff}.system-note .ui-icon{width:20px;height:20px}.system-note p{margin:0}.party-flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin-top:17px;padding:14px 10px;border:1px solid #16466c;background:#03101d;color:#8dc9e9;font:700 10px 'Barlow Condensed';letter-spacing:1.5px}.party-flow b{color:#43bfff;font-size:18px;text-shadow:0 0 12px #008cff}.legacy-feature{background:radial-gradient(ellipse at 50% 0%,#06427344,transparent 58%),linear-gradient(145deg,#061629,#030a13)}
+/* Confirmação de compartilhamento: captura sob demanda e arquivo temporário */
+.share-confirm-backdrop{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:18px;background:#010711d9;backdrop-filter:blur(9px)}
+.share-confirm-backdrop.open{display:grid}
+.share-confirm{width:min(460px,100%);max-height:min(88vh,760px);overflow:auto;border:1px solid #237eb5;background:radial-gradient(ellipse at 50% 0%,#0a3b6555,transparent 55%),linear-gradient(145deg,#081a2c,#020811 78%);box-shadow:0 0 0 1px #007bff22,0 0 38px #007bff35,0 24px 70px #000e;padding:20px;clip-path:polygon(0 14px,14px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px))}
+.share-confirm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:13px;border-bottom:1px solid #17466c}
+.share-confirm-kicker{color:#4dbfff;font:800 9px 'Barlow Condensed';letter-spacing:2px}
+.share-confirm h3{margin:5px 0 0;color:#c2dced;font:800 25px 'Barlow Condensed';letter-spacing:.8px;text-transform:uppercase}
+.share-confirm-close{width:32px;height:32px;border:1px solid #1b527c;background:#06172a;color:#8fc8e8;font-size:20px}
+.share-confirm-copy{margin:13px 0;color:#819fb8;font-size:11px;line-height:1.7}
+.share-confirm-preview{display:block;width:100%;max-height:48vh;object-fit:contain;background:#020811;border:1px solid #17466c;box-shadow:inset 0 0 20px #007bff12}
+.share-confirm-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}
+.share-confirm-actions button{min-height:40px;padding:9px 15px;border:1px solid #1b5a85;background:linear-gradient(145deg,#0b2a46,#04101d);color:#9fd7f3;font-size:10px;font-weight:800;letter-spacing:.6px}
+.share-confirm-actions .primary{border-color:#258fca;background:linear-gradient(110deg,#064477,#0876b7);color:#d1efff;box-shadow:0 0 16px #007bff30}
+.share-confirm-actions button:disabled{opacity:.55;cursor:wait}
+@media(max-width:520px){.share-confirm{padding:16px}.share-confirm-actions{display:grid;grid-template-columns:1fr 1fr}.share-confirm-actions button{padding:10px 8px}}
 .footer{display:flex;justify-content:space-between;gap:12px;margin-top:46px;padding:18px 0;border-top:1px solid #123657;color:#496982;font-size:8px;letter-spacing:1.5px}.toast{position:fixed;z-index:60;bottom:20px;left:50%;transform:translate(-50%,18px);opacity:0;pointer-events:none;padding:11px 16px;border:1px solid #288dc8;background:#061a2b;color:#9ddcff;box-shadow:0 0 24px #007bff66;font-size:11px;font-weight:800;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
 body.quiet-mode{--glow:none}body.quiet-mode .brand-mark,body.quiet-mode .nav-btn.active,body.quiet-mode .mission-icon,body.quiet-mode .module-icon,body.quiet-mode .type-glyph,body.quiet-mode .lore-sigil{box-shadow:none}body.quiet-mode .tower-svg{filter:none;animation:none}body.quiet-mode .live-dot,body.quiet-mode .pulse,body.quiet-mode .orbit-node{animation:none;box-shadow:none}
 /* Resposta rápida ao hover, foco e interação dos controles. */
@@ -141,6 +156,14 @@ button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card
   <footer class="footer"><span>THE TOWER ARCHIVE · PLAYER DATABASE</span><span>UNOFFICIAL RPG COMPENDIUM · BUILD 0.1</span></footer>
 </main>
 <div class="toast" id="toast">Registro atualizado.</div>
+<div class="share-confirm-backdrop" id="shareConfirmBackdrop" aria-hidden="true">
+ <section class="share-confirm" role="dialog" aria-modal="true" aria-labelledby="shareConfirmTitle" aria-describedby="shareConfirmDescription">
+  <header class="share-confirm-head"><div><div class="share-confirm-kicker">TORRE ARCHIVE // IMAGE READY</div><h3 id="shareConfirmTitle">Imagem preparada</h3></div><button class="share-confirm-close" id="shareConfirmClose" type="button" aria-label="Fechar confirmação">×</button></header>
+  <p class="share-confirm-copy" id="shareConfirmDescription">Deseja compartilhar esta imagem?</p>
+  <img class="share-confirm-preview" id="shareConfirmPreview" alt="Prévia da imagem do físico selecionado">
+  <div class="share-confirm-actions"><button id="shareConfirmCancel" type="button">Cancelar</button><button class="primary" id="shareConfirmSend" type="button">Compartilhar imagem</button></div>
+ </section>
+</div>
 <script>
 
 const ICONS = {
@@ -207,6 +230,13 @@ const physiques = [
 {name:"Sobrevivência Responsiva",emoji:"⌁",category:"Adaptativo",rarity:"Incomum",desc:"O portador possui capacidade inata de resistir bem às mudanças externas sofridas dentro da Torre e transformá-las em resistência. Não começa com bônus extraordinários, mas possui grande capacidade de sobrevivência e continuidade.",initial:["✧ +1 de Anseio","✦ Dádiva da Sobrevivência: quando sobrevive a condições de quase morte, adquire +1 de resistência àquele respectivo dano ou efeito de status que ocasionaria sua morte."],level:["✧ +2 de Anseio"],milestone:["✧ +4 de Anseio","◆ +1 de Força","⬡ +1 de Constituição","◇ -1 de Presença"]}
 ];
 
+const physicalSearchIndex = new Map(physiques.map(p => [
+ p, [p.name,p.category,p.rarity,p.desc,...p.initial,...p.level,...p.milestone]
+  .join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+]));
+const physicalOriginalOrder = new Map(physiques.map((p,i)=>[p,i]));
+const PHYSICAL_RARITY_ORDER = {'Comum':0,'Incomum':1,'Raro':2,'Lendário':3};
+
 const pages = {
  inicio: () => `<section class="section">
   <div class="section-head"><div><div class="section-kicker">SYSTEM DASHBOARD // VISÃO GERAL</div><h2>Central do Escalador</h2><div class="sub">Terminal de acesso aos registros conhecidos da Grande Torre.</div></div><div class="count">DATABASE // ONLINE</div></div>
@@ -262,27 +292,29 @@ function renderPhysicals(){
  const grid=document.getElementById('physicalGrid'); if(!grid)return;
  const q=(document.getElementById('searchInput')?.value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const cat=document.getElementById('categoryFilter')?.value||'', rar=document.getElementById('rarityFilter')?.value||'';
- let list=physiques.filter(p=>(!cat||p.category===cat)&&(!rar||p.rarity===rar)&&(!q||[p.name,p.category,p.rarity,p.desc,...p.initial,...p.level,...p.milestone].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(q)));
- const rarityOrder={'Comum':0,'Incomum':1,'Raro':2,'Lendário':3};
- list.sort((a,b)=>(rarityOrder[a.rarity]??99)-(rarityOrder[b.rarity]??99)||physiques.indexOf(a)-physiques.indexOf(b));
+ let list=physiques.filter(p=>(!cat||p.category===cat)&&(!rar||p.rarity===rar)&&(!q||physicalSearchIndex.get(p).includes(q)));
+ list.sort((a,b)=>(PHYSICAL_RARITY_ORDER[a.rarity]??99)-(PHYSICAL_RARITY_ORDER[b.rarity]??99)||(physicalOriginalOrder.get(a)??0)-(physicalOriginalOrder.get(b)??0));
  document.getElementById('physicalCount').textContent=`${list.length} / ${physiques.length} REGISTROS`;
  grid.innerHTML=list.map((p,i)=>`<details class="physical-card" data-slug="${slugify(p.name)}" id="physical-capture-${i}" ${i===0?'open':''}><summary class="card-top"><span class="card-title"><span class="type-glyph">${svgIcon(CATEGORY_ICON[p.category]||'circle')}</span><span>${p.name}</span></span><span class="card-controls"><button class="card-expand" type="button" data-toggle-card aria-label="${i===0?'Recolher':'Expandir'} informações de ${p.name}" aria-expanded="${i===0}" title="${i===0?'Recolher':'Expandir'} informações"><span class="expand-mark" aria-hidden="true"></span></button><button class="card-share" type="button" data-share-card title="Compartilhar imagem deste físico" aria-label="Compartilhar imagem de ${p.name}">${svgIcon('share')}</button><span class="pill rarity-${p.rarity.toLowerCase()}">${p.rarity}</span><span class="pill">${p.category}</span></span></summary><div class="card-body"><p class="description">${p.desc}</p><div class="bonus-grid"><div class="bonus-box"><h4>${svgIcon('plus')} Bônus iniciais</h4><ul>${p.initial.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('target')} Por nível</h4><ul>${p.level.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('layers')} A cada 5 níveis</h4><ul>${p.milestone.map(statLine).join('')}</ul></div></div></div></details>`).join('')||`<div class="empty" style="grid-column:1/-1"><span class="symbol">${svgIcon('search','ui-icon xl')}</span><h3>NENHUM REGISTRO ENCONTRADO</h3><p>Tente alterar os termos da busca ou os filtros.</p></div>`;
  grid.querySelectorAll('.physical-card').forEach(card=>{card.addEventListener('toggle',()=>syncCardToggle(card));syncCardToggle(card)});
- warmVisibleShareCards(grid);
+
 }
 function syncCardToggle(card){const button=card.querySelector('[data-toggle-card]');if(button){button.setAttribute('aria-expanded',String(card.open));const action=card.open?'Recolher':'Expandir';button.setAttribute('aria-label',`${action} informações de ${card.querySelector('.card-title span:last-child')?.textContent||'físico'}`);button.title=`${action} informações`;}}
 function navigate(page){
  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
  document.getElementById('pageContent').innerHTML=pages[page]();
  if(page==='fisicos'){
-  ensureHtml2Canvas().catch(()=>{});
   const sel=document.getElementById('categoryFilter');
   [...new Set(physiques.map(p=>p.category))].sort().forEach(c=>sel.add(new Option(c,c)));
-  document.getElementById('searchInput').addEventListener('input',renderPhysicals);
+  let searchDebounce=0;
+  document.getElementById('searchInput').addEventListener('input',()=>{
+   clearTimeout(searchDebounce);
+   searchDebounce=setTimeout(renderPhysicals,110);
+  });
   sel.addEventListener('change',renderPhysicals);
   document.getElementById('rarityFilter').addEventListener('change',renderPhysicals);
   document.getElementById('toggleAllBtn').addEventListener('click',()=>{const cards=[...document.querySelectorAll('.physical-card')];const shouldOpen=cards.some(c=>!c.open);cards.forEach(c=>{c.open=shouldOpen;syncCardToggle(c)});document.getElementById('toggleAllBtn').innerHTML=`${svgIcon(shouldOpen?'layers':'plus')} ${shouldOpen?'Recolher todos':'Expandir todos'}`});
-  document.getElementById('resetBtn').addEventListener('click',()=>{document.getElementById('searchInput').value='';sel.value='';document.getElementById('rarityFilter').value='';renderPhysicals()});
+  document.getElementById('resetBtn').addEventListener('click',()=>{clearTimeout(searchDebounce);document.getElementById('searchInput').value='';sel.value='';document.getElementById('rarityFilter').value='';renderPhysicals()});
   renderPhysicals();
  }
  fillIcons(document.getElementById('pageContent'));
@@ -311,10 +343,8 @@ function ensureHtml2Canvas(){
  }).catch(error=>{html2canvasLoader=null;throw error});
  return html2canvasLoader;
 }
-// A imagem é gerada em segundo plano, antes do clique. Assim, o menu nativo
-// pode ser chamado imediatamente dentro do evento de clique, sem perder a
-// ativação temporária exigida pela Web Share API.
-ensureHtml2Canvas().catch(()=>{});
+// A biblioteca de captura é carregada sob demanda, quando um cartão próximo
+// o usuário solicita explicitamente o compartilhamento. Isso evita trabalho desnecessário.
 function canvasToBlob(canvas,type='image/png'){
  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Falha ao gerar PNG.')),type));
 }
@@ -325,23 +355,23 @@ function downloadBlob(blob,filename){
 }
 function slugify(value){return String(value||'fisico').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'fisico'}
 
-const physicalShareCache=new Map();
-const physicalSharePending=new Map();
-const physicalShareQueue=[];
-let physicalShareWorkerActive=false;
-let physicalShareObserver=null;
 let nativeShareInProgress=false;
+let sharePreparationInProgress=false;
+let currentShareAsset=null;
+let currentShareObjectUrl=null;
+let currentShareButton=null;
+let currentShareSlug='';
 
 function setPhysicalShareState(slug,state){
  document.querySelectorAll(`.physical-card[data-slug="${slug}"] [data-share-card]`).forEach(button=>{
   const preparing=state==='preparing';
-  button.disabled=preparing;
+  button.disabled=preparing||state==='sharing';
   button.classList.toggle('is-preparing',preparing);
   button.classList.toggle('is-sharing',state==='sharing');
-  if(state==='ready')button.title='Compartilhar imagem deste físico';
-  else if(state==='preparing')button.title='Preparando imagem para compartilhamento…';
-  else if(state==='error')button.title='Não foi possível preparar. Clique para tentar novamente.';
+  if(state==='preparing')button.title='Preparando imagem para confirmação…';
   else if(state==='sharing')button.title='Abrindo compartilhamento nativo…';
+  else if(state==='error')button.title='Não foi possível preparar. Clique para tentar novamente.';
+  else button.title='Compartilhar imagem deste físico';
  });
 }
 
@@ -363,13 +393,14 @@ function buildShareClone(card){
 
 async function createPhysicalShareAsset(card,slug){
  const capture=await ensureHtml2Canvas();
- if(document.fonts?.ready)await document.fonts.ready.catch(()=>{});
+ if(document.fonts?.status==='loading')await document.fonts.ready.catch(()=>{});
  const {stage,clone}=buildShareClone(card);
  let canvas=null;
  try{
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  // Um único frame basta para o clone entrar no fluxo de layout antes da captura.
+  await new Promise(resolve=>requestAnimationFrame(resolve));
   canvas=await capture(clone,{
-   backgroundColor:'#030a13',scale:2,useCORS:true,allowTaint:false,logging:false
+   backgroundColor:'#030a13',scale:1.45,useCORS:true,allowTaint:false,logging:false
   });
   const blob=await canvasToBlob(canvas,'image/png');
   const title=card.querySelector('.card-title span:last-child')?.textContent||'Físico';
@@ -382,208 +413,236 @@ async function createPhysicalShareAsset(card,slug){
  }
 }
 
-function enqueuePhysicalSharePreparation(card){
- const slug=card.dataset.slug||slugify(card.querySelector('.card-title span:last-child')?.textContent);
- if(physicalShareCache.has(slug)){
-  setPhysicalShareState(slug,'ready');
-  return Promise.resolve(physicalShareCache.get(slug));
+function releaseCurrentShareAsset(){
+ if(currentShareObjectUrl){URL.revokeObjectURL(currentShareObjectUrl);currentShareObjectUrl=null;}
+ currentShareAsset=null;currentShareButton=null;currentShareSlug='';
+ const backdrop=document.getElementById('shareConfirmBackdrop');
+ backdrop.classList.remove('open');backdrop.setAttribute('aria-hidden','true');
+ document.getElementById('shareConfirmPreview').removeAttribute('src');
+}
+
+function openShareConfirmation(asset,button,slug){
+ currentShareAsset=asset;currentShareButton=button;currentShareSlug=slug;
+ currentShareObjectUrl=URL.createObjectURL(asset.blob);
+ const preview=document.getElementById('shareConfirmPreview');
+ preview.src=currentShareObjectUrl;
+ document.getElementById('shareConfirmTitle').textContent=asset.title;
+ document.getElementById('shareConfirmDescription').textContent='Deseja compartilhar esta imagem?';
+ const backdrop=document.getElementById('shareConfirmBackdrop');
+ backdrop.classList.add('open');backdrop.setAttribute('aria-hidden','false');
+ document.getElementById('shareConfirmSend').disabled=false;
+ document.getElementById('shareConfirmSend').focus();
+}
+
+async function sharePhysicalCard(button){
+ if(sharePreparationInProgress||nativeShareInProgress||currentShareAsset){
+  toast('Finalize ou cancele o compartilhamento atual antes de iniciar outro.');
+  return;
  }
- if(physicalSharePending.has(slug))return physicalSharePending.get(slug);
- setPhysicalShareState(slug,'preparing');
- let resolveJob,rejectJob;
- const promise=new Promise((resolve,reject)=>{resolveJob=resolve;rejectJob=reject});
- physicalSharePending.set(slug,promise);
- physicalShareQueue.push({card,slug,resolve:resolveJob,reject:rejectJob});
- processPhysicalShareQueue();
- return promise;
-}
-
-async function processPhysicalShareQueue(){
- if(physicalShareWorkerActive)return;
- physicalShareWorkerActive=true;
- while(physicalShareQueue.length){
-  const job=physicalShareQueue.shift();
-  try{
-   const asset=await createPhysicalShareAsset(job.card,job.slug);
-   physicalShareCache.set(job.slug,asset);
-   setPhysicalShareState(job.slug,'ready');
-   job.resolve(asset);
-  }catch(error){
-   console.error(`Falha ao preparar imagem de ${job.slug}:`,error);
-   setPhysicalShareState(job.slug,'error');
-   physicalSharePending.delete(job.slug);
-   job.reject(error);
-  }finally{
-   physicalSharePending.delete(job.slug);
-  }
- }
- physicalShareWorkerActive=false;
-}
-
-function warmVisibleShareCards(grid){
- if(physicalShareObserver){physicalShareObserver.disconnect();physicalShareObserver=null;}
- const cards=[...grid.querySelectorAll('.physical-card')];
- cards.forEach(card=>{
-  const slug=card.dataset.slug;
-  setPhysicalShareState(slug,physicalShareCache.has(slug)?'ready':'preparing');
- });
- // Deixa os primeiros cartões prontos imediatamente; os demais entram na
- // fila conforme se aproximam da área visível, economizando memória/CPU.
- cards.slice(0,5).forEach(card=>enqueuePhysicalSharePreparation(card).catch(()=>{}));
- if('IntersectionObserver' in window){
-  const observer=new IntersectionObserver(entries=>{
-   entries.forEach(entry=>{
-    if(entry.isIntersecting){
-     observer.unobserve(entry.target);
-     enqueuePhysicalSharePreparation(entry.target).catch(()=>{});
-    }
-   });
-  },{root:null,rootMargin:'720px 0px',threshold:0.01});
-  physicalShareObserver=observer;
-  cards.slice(5).forEach(card=>{
-   if(!physicalShareCache.has(card.dataset.slug))observer.observe(card);
-  });
- }else{
-  cards.slice(5).forEach(card=>enqueuePhysicalSharePreparation(card).catch(()=>{}));
- }
-}
-
-function handleNativeShareResult(button,sharePromise,slug){
- nativeShareInProgress=true;
- setPhysicalShareState(slug,'sharing');
- button.disabled=true;
- Promise.resolve(sharePromise).then(()=>{
-  toast('Imagem enviada ao compartilhamento do dispositivo.');
- }).catch(error=>{
-  if(error?.name==='AbortError'){
-   toast('Compartilhamento cancelado.');
-  }else if(error?.name==='InvalidStateError'){
-   toast('Já existe um compartilhamento em andamento. Feche a janela do sistema e tente novamente.');
-  }else if(error?.name==='NotAllowedError'){
-   console.error('Web Share bloqueado pelo navegador:',error);
-   toast('O navegador bloqueou o compartilhamento. A imagem foi baixada.');
-   const asset=physicalShareCache.get(slug);
-   if(asset)downloadBlob(asset.blob,asset.filename);
-  }else{
-   console.error('Falha no compartilhamento nativo:',error);
-   toast('Não foi possível abrir o compartilhamento nativo.');
-  }
- }).finally(()=>{
-  nativeShareInProgress=false;
-  button.disabled=false;
-  setPhysicalShareState(slug,'ready');
- });
-}
-
-// Esta função é deliberadamente síncrona até navigator.share(): nenhum await,
-// timer ou captura de imagem ocorre entre o clique e a chamada nativa.
-function sharePhysicalCard(button){
  const card=button.closest('.physical-card');
  if(!card)return;
  const slug=card.dataset.slug||slugify(card.querySelector('.card-title span:last-child')?.textContent);
- const asset=physicalShareCache.get(slug);
- if(!asset){
-  if(button.dataset.retrying!=='true'){
-   button.dataset.retrying='true';
-   toast('Preparando a imagem deste físico. O botão será liberado em instantes.');
-   enqueuePhysicalSharePreparation(card).catch(()=>{}).finally(()=>{
-    if(button.isConnected)delete button.dataset.retrying;
-   });
-  }
-  return;
+ sharePreparationInProgress=true;
+ setPhysicalShareState(slug,'preparing');
+ try{
+  // A captura acontece somente após o clique; nenhum outro cartão é preparado.
+  const asset=await createPhysicalShareAsset(card,slug);
+  openShareConfirmation(asset,button,slug);
+ }catch(error){
+  console.error(`Falha ao preparar imagem de ${slug}:`,error);
+  toast('Não foi possível preparar a imagem. Tente novamente.');
+  setPhysicalShareState(slug,'error');
+ }finally{
+  sharePreparationInProgress=false;
+  if(button.isConnected)button.disabled=false;
  }
- if(nativeShareInProgress){
-  toast('Um compartilhamento já está aberto. Aguarde finalizar.');
-  return;
- }
+}
+
+function confirmNativeShare(){
+ const asset=currentShareAsset,button=currentShareButton,slug=currentShareSlug;
+ if(!asset||nativeShareInProgress)return;
+ const sendButton=document.getElementById('shareConfirmSend');
  if(navigator.share&&navigator.canShare){
   let canShareFiles=false;
   try{canShareFiles=navigator.canShare({files:[asset.file]});}catch(error){console.warn('Não foi possível validar o arquivo para compartilhamento:',error);}
   if(canShareFiles){
    try{
-    // Chamada direta no gesto do usuário para preservar a ativação transitória.
+    // Esta chamada ocorre diretamente no segundo clique, preservando a ativação do usuário.
     const sharePromise=navigator.share({files:[asset.file],title:`${asset.title} · A Grande Torre`});
-    handleNativeShareResult(button,sharePromise,slug);
+    nativeShareInProgress=true;sendButton.disabled=true;
+    if(button){button.disabled=true;setPhysicalShareState(slug,'sharing');}
+    Promise.resolve(sharePromise).then(()=>{
+     toast('Imagem enviada ao compartilhamento do dispositivo.');
+    }).catch(error=>{
+     if(error?.name==='AbortError')toast('Compartilhamento cancelado.');
+     else if(error?.name==='InvalidStateError')toast('Já existe um compartilhamento em andamento. Feche a janela do sistema e tente novamente.');
+     else if(error?.name==='NotAllowedError'){
+      console.warn('O navegador bloqueou o compartilhamento nativo:',error);
+      toast('O navegador bloqueou o compartilhamento. A imagem foi baixada.');
+      downloadBlob(asset.blob,asset.filename);
+     }else{
+      console.error('Falha no compartilhamento nativo:',error);
+      toast('Não foi possível abrir o compartilhamento nativo.');
+     }
+    }).finally(()=>{
+     nativeShareInProgress=false;
+     if(button?.isConnected){button.disabled=false;setPhysicalShareState(slug,'ready');}
+     releaseCurrentShareAsset();
+    });
+    return;
    }catch(error){
     console.error('Falha ao iniciar compartilhamento nativo:',error);
-    if(error?.name==='InvalidStateError')toast('Já existe um compartilhamento em andamento. Aguarde e tente novamente.');
-    else if(error?.name==='NotAllowedError')toast('O navegador bloqueou o compartilhamento.');
-    else toast('Não foi possível iniciar o compartilhamento.');
+    toast(error?.name==='InvalidStateError'?'Já existe um compartilhamento em andamento.':'Não foi possível abrir o compartilhamento nativo.');
+    sendButton.disabled=false;
+    return;
    }
-  }else{
-   downloadBlob(asset.blob,asset.filename);
-   toast('Este navegador não aceita compartilhar arquivos. PNG baixado.');
   }
- }else{
-  downloadBlob(asset.blob,asset.filename);
-  toast('Compartilhamento de arquivos indisponível neste navegador. PNG baixado.');
  }
+ // Fallback para navegadores sem Web Share de arquivos: baixa o arquivo já preparado.
+ downloadBlob(asset.blob,asset.filename);
+ toast('Este navegador não oferece compartilhamento de arquivos. Imagem baixada.');
+ releaseCurrentShareAsset();
 }
 
-// Partículas suaves que nascem no centro e se dispersam até as laterais.
+function cancelShareConfirmation(){
+ if(nativeShareInProgress)return;
+ const slug=currentShareSlug,button=currentShareButton;
+ releaseCurrentShareAsset();
+ if(button?.isConnected){button.disabled=false;setPhysicalShareState(slug,'ready');}
+ toast('Compartilhamento cancelado.');
+}
+
+document.getElementById('shareConfirmSend').addEventListener('click',confirmNativeShare);
+document.getElementById('shareConfirmCancel').addEventListener('click',cancelShareConfirmation);
+document.getElementById('shareConfirmClose').addEventListener('click',cancelShareConfirmation);
+document.getElementById('shareConfirmBackdrop').addEventListener('click',event=>{
+ if(event.target.id==='shareConfirmBackdrop')cancelShareConfirmation();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&currentShareAsset&&!nativeShareInProgress)cancelShareConfirmation();
+});
+
+// Partículas contínuas: emissão distribuída, movimento leve e renderização otimizada.
 (function startEmberField(){
  const canvas=document.getElementById('emberField');
  if(!canvas)return;
- const ctx=canvas.getContext('2d');
+ const ctx=canvas.getContext('2d',{alpha:true,desynchronized:true});
  if(!ctx)return;
  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- let width=0,height=0,dpr=1,particles=[],lastTime=0,frame=0;
+ const FRAME_INTERVAL=1000/40;
+ let width=0,height=0,dpr=1,particles=[],lastRender=0,frame=0;
  const random=(min,max)=>min+Math.random()*(max-min);
+ const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+ const smoothstep=(a,b,value)=>{
+  const t=clamp((value-a)/(b-a),0,1);
+  return t*t*(3-2*t);
+ };
  function maxDistance(angle){
   const dx=Math.cos(angle),dy=Math.sin(angle);
   const tx=Math.abs(dx)<.0001?Infinity:(width*.5)/Math.abs(dx);
   const ty=Math.abs(dy)<.0001?Infinity:(height*.5)/Math.abs(dy);
-  return Math.min(tx,ty)*random(.86,1.02);
+  return Math.min(tx,ty)*random(.88,1.015);
  }
- function makeParticle(){
-  const angle=random(0,Math.PI*2);
-  return {angle,distance:maxDistance(angle),progress:random(0,.16),life:random(13000,24000),drift:random(5,25),phase:random(0,Math.PI*2),radius:random(1.25,2.35),alpha:random(.43,.76)};
+ // Os brilhos são pré-renderizados uma única vez, evitando dezenas de shadowBlur por quadro.
+ function makeGlowSprite(radius){
+  const size=Math.ceil(radius*9),sprite=document.createElement('canvas');
+  sprite.width=sprite.height=size;
+  const glow=sprite.getContext('2d');
+  const gradient=glow.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2);
+  gradient.addColorStop(0,'rgba(190,239,255,1)');
+  gradient.addColorStop(.12,'rgba(94,202,255,.96)');
+  gradient.addColorStop(.38,'rgba(25,137,255,.42)');
+  gradient.addColorStop(1,'rgba(0,103,255,0)');
+  glow.fillStyle=gradient;glow.fillRect(0,0,size,size);
+  return {canvas:sprite,size};
+ }
+ const glowSprites=[makeGlowSprite(1.8),makeGlowSprite(2.25),makeGlowSprite(2.7)];
+ function makeParticle(ageOffset=0){
+  const angle=random(0,Math.PI*2),life=random(10500,17500);
+  return {
+   angle,distance:maxDistance(angle),age:ageOffset*life,life,
+   drift:random(8,24),phase:random(0,Math.PI*2),
+   radius:random(1.8,2.65),alpha:random(.48,.78),
+   sprite:Math.floor(random(0,glowSprites.length)),
+   twinkle:random(0,Math.PI*2),twinkleSpeed:random(.7,1.5)
+  };
  }
  function resize(){
-  width=window.innerWidth;height=window.innerHeight;dpr=Math.min(window.devicePixelRatio||1,1.65);
+  width=window.innerWidth;height=window.innerHeight;
+  // DPR moderado reduz o custo do canvas sem comprometer o brilho em telas comuns.
+  dpr=Math.min(window.devicePixelRatio||1,1.35);
   canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
   canvas.style.width=width+'px';canvas.style.height=height+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  const count=Math.max(14,Math.min(34,Math.round(width*height/48000)));
-  particles=Array.from({length:count},makeParticle);
+  const count=Math.max(14,Math.min(27,Math.round(width*height/65000)));
+  // Distribui as idades pelo ciclo: nunca há um reinício coletivo nem um intervalo sem brasas.
+  particles=Array.from({length:count},(_,i)=>makeParticle((i+Math.random())/count));
+  lastRender=0;
   if(reducedMotion)drawStatic();
  }
  function position(p,progress){
   const wobble=Math.sin(progress*7.2+p.phase)*p.drift*progress;
-  const x=width/2+Math.cos(p.angle)*p.distance*progress-Math.sin(p.angle)*wobble;
-  const y=height/2+Math.sin(p.angle)*p.distance*progress+Math.cos(p.angle)*wobble;
-  return {x,y};
+  return {
+   x:width/2+Math.cos(p.angle)*p.distance*progress-Math.sin(p.angle)*wobble,
+   y:height/2+Math.sin(p.angle)*p.distance*progress+Math.cos(p.angle)*wobble
+  };
+ }
+ function opacityAt(p,progress,time){
+  // Nascem já discretamente visíveis e perdem luz aos poucos apenas perto das bordas.
+  const emergence=.58+.42*smoothstep(0,.055,progress);
+  const departure=1-smoothstep(.70,1,progress);
+  const shimmer=.91+.09*Math.sin(time*.001*p.twinkleSpeed+p.twinkle);
+  return p.alpha*emergence*departure*shimmer;
  }
  function drawStatic(){
   ctx.clearRect(0,0,width,height);
-  particles.slice(0,18).forEach((p,i)=>{
-   const pos=position(p,.32+(i%5)*.09);ctx.beginPath();ctx.arc(pos.x,pos.y,p.radius,0,Math.PI*2);
-   ctx.fillStyle='rgba(75,184,255,.34)';ctx.shadowColor='#149dff';ctx.shadowBlur=13;ctx.fill();
-  });ctx.shadowBlur=0;
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  particles.forEach(p=>{
+   const progress=p.age/p.life,pos=position(p,progress),sprite=glowSprites[p.sprite];
+   ctx.globalAlpha=.25;
+   ctx.drawImage(sprite.canvas,pos.x-sprite.size/2,pos.y-sprite.size/2,sprite.size,sprite.size);
+  });
+  ctx.restore();ctx.globalAlpha=1;
  }
  function animate(now){
-  if(document.hidden){frame=0;lastTime=0;return;}
-  const delta=Math.min(48,lastTime?now-lastTime:16);lastTime=now;
-  ctx.clearRect(0,0,width,height);ctx.save();ctx.globalCompositeOperation='lighter';
+  if(document.hidden){frame=0;lastRender=0;return;}
+  // Mantém movimento fluido a 40 fps, reduzindo trabalho desnecessário em telas de alta frequência.
+  if(lastRender&&now-lastRender<FRAME_INTERVAL){frame=requestAnimationFrame(animate);return;}
+  const delta=Math.min(60,lastRender?now-lastRender:FRAME_INTERVAL);
+  lastRender=now;
+  ctx.clearRect(0,0,width,height);
+  ctx.save();ctx.globalCompositeOperation='lighter';
   for(let i=0;i<particles.length;i++){
-   const p=particles[i];const previous=position(p,p.progress);
-   p.progress+=delta/p.life;
-   if(p.progress>=1){particles[i]=makeParticle();continue;}
-   const pos=position(p,p.progress);
-   const fadeIn=Math.min(1,p.progress*7),fadeOut=Math.min(1,(1-p.progress)*3.1);
-   const alpha=p.alpha*fadeIn*fadeOut;
-   ctx.beginPath();ctx.moveTo(previous.x,previous.y);ctx.lineTo(pos.x,pos.y);
-   ctx.strokeStyle=`rgba(38,158,255,${alpha*.28})`;ctx.lineWidth=1;ctx.stroke();
-   ctx.beginPath();ctx.arc(pos.x,pos.y,p.radius,0,Math.PI*2);
-   ctx.fillStyle=`rgba(112,218,255,${Math.min(.92,alpha*1.12)})`;ctx.shadowColor='#159dff';ctx.shadowBlur=12+p.radius*6;ctx.fill();
+   let p=particles[i];
+   const previousProgress=p.age/p.life;
+   let previous=position(p,previousProgress);
+   p.age+=delta;
+   if(p.age>=p.life){
+    // Cada brasa renasce individualmente no centro, sem sincronizar o ciclo das demais.
+    p=particles[i]=makeParticle();
+    previous=position(p,0);
+   }
+   const progress=p.age/p.life,pos=position(p,progress),alpha=opacityAt(p,progress,now);
+   if(alpha<=.008)continue;
+   // Rastro fino, quase imperceptível, para dar sensação de deslocamento sem poluir a tela.
+   ctx.globalAlpha=alpha*.18;
+   ctx.strokeStyle='#2b9fff';ctx.lineWidth=.85;
+   ctx.beginPath();ctx.moveTo(previous.x,previous.y);ctx.lineTo(pos.x,pos.y);ctx.stroke();
+   const sprite=glowSprites[p.sprite];
+   ctx.globalAlpha=alpha;
+   ctx.drawImage(sprite.canvas,pos.x-sprite.size/2,pos.y-sprite.size/2,sprite.size,sprite.size);
   }
-  ctx.restore();frame=requestAnimationFrame(animate);
+  ctx.restore();ctx.globalAlpha=1;
+  frame=requestAnimationFrame(animate);
  }
  resize();
  window.addEventListener('resize',resize,{passive:true});
  document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){if(frame)cancelAnimationFrame(frame);frame=0;}
-  else if(!reducedMotion&&!frame){lastTime=0;frame=requestAnimationFrame(animate);}
+  if(document.hidden){
+   if(frame)cancelAnimationFrame(frame);frame=0;lastRender=0;
+  }else{
+   if(!reducedMotion&&!frame){lastRender=0;frame=requestAnimationFrame(animate);}
+  }
  });
  if(!reducedMotion)frame=requestAnimationFrame(animate);
 })();
