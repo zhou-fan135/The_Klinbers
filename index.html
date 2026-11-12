@@ -414,7 +414,7 @@ button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card
  <section class="share-confirm" role="dialog" aria-modal="true" aria-labelledby="shareConfirmTitle" aria-describedby="shareConfirmDescription">
   <header class="share-confirm-head"><div><div class="share-confirm-kicker">TORRE ARCHIVE // IMAGE READY</div><h3 id="shareConfirmTitle">Imagem preparada</h3></div><button class="share-confirm-close" id="shareConfirmClose" type="button" aria-label="Fechar confirmação">×</button></header>
   <p class="share-confirm-copy" id="shareConfirmDescription">Deseja compartilhar esta imagem?</p>
-  <img class="share-confirm-preview" id="shareConfirmPreview" alt="Prévia da imagem do físico selecionado">
+  <img class="share-confirm-preview" id="shareConfirmPreview" alt="Prévia da imagem selecionada">
   <div class="share-confirm-actions"><button id="shareConfirmCancel" type="button">Cancelar</button><button class="primary" id="shareConfirmSend" type="button">Compartilhar imagem</button></div>
  </section>
 </div>
@@ -813,16 +813,41 @@ async function sharePhysicalCard(button){
 }
 
 
+// html2canvas 1.4.1 não interpreta a serialização moderna `color(srgb ...)`
+// que o Chromium devolve ao calcular cores produzidas por color-mix().
+// Nas capturas de linhagem, convertemos somente esses valores calculados para
+// rgb()/rgba() no clone temporário, sem alterar a aparência da página original.
+function makeRaceCaptureColorsCompatible(root){
+ const colorPattern=/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/gi;
+ const properties=['border-top-color','border-right-color','border-bottom-color','border-left-color','border-block-start-color','border-block-end-color','border-inline-start-color','border-inline-end-color','background-image','box-shadow','text-shadow','outline-color'];
+ const toRgb=value=>value.replace(colorPattern,(_,r,g,b,a)=>{
+  const channel=n=>Math.round(Math.max(0,Math.min(1,Number(n)))*255);
+  const rgb=`${channel(r)}, ${channel(g)}, ${channel(b)}`;
+  return a===undefined?`rgb(${rgb})`:`rgba(${rgb}, ${Math.max(0,Math.min(1,Number(a)))})`;
+ });
+ for(const element of [root,...root.querySelectorAll('*')]){
+  const computed=getComputedStyle(element);
+  for(const property of properties){
+   const value=computed.getPropertyValue(property);
+   if(value&&value.includes('color(srgb')){
+    element.style.setProperty(property,toRgb(value),'important');
+   }
+  }
+ }
+}
+
 async function shareRaceBlock(button,kind){
  if(sharePreparationInProgress||nativeShareInProgress||currentShareAsset){toast('Finalize ou cancele o compartilhamento atual antes de iniciar outro.');return;}
  const card=button.closest('.race-card');if(!card)return;
  const race=races.find(r=>r.id===card.dataset.raceId);if(!race)return;
- const index=Number(button.dataset.shareRaceTalent);
+ const index=kind==='talent'?Number(button.dataset.shareRaceTalent):-1;
+ if(kind==='talent'&&(!Number.isInteger(index)||index<0||index>=race.talents.length))return;
  const slug=`${race.id}-${kind==='bonus'?'bonus':`talento-${index+1}`}`;
  sharePreparationInProgress=true;button.disabled=true;button.classList.add('is-preparing');
  let stage=null,canvas=null;
  try{
   const capture=await ensureHtml2Canvas();
+  if(document.fonts?.status==='loading')await document.fonts.ready.catch(()=>{});
   const width=Math.max(280,Math.round(card.getBoundingClientRect().width||560));
   stage=document.createElement('div');stage.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;min-width:${width}px;max-width:${width}px;pointer-events:none;z-index:-1;`;
   const clone=card.cloneNode(true);clone.open=true;clone.style.width=width+'px';clone.querySelectorAll('.race-share').forEach(el=>el.remove());
@@ -841,12 +866,15 @@ async function shareRaceBlock(button,kind){
   const emblem=document.createElement('div');emblem.innerHTML=raceSvg(race,races.indexOf(race));emblem.style.cssText=`width:54px;height:54px;color:${race.color};flex:0 0 54px`;
   const info=document.createElement('div');const kicker=document.createElement('div');kicker.textContent='A GRANDE TORRE // REGISTRO DE LINHAGEM';kicker.style.cssText=`color:${race.color};font-size:9px;margin-bottom:5px`;
   const title=document.createElement('div');title.textContent=race.name+' · '+(kind==='bonus'?'BÔNUS RACIAIS':race.talents[index][0]);title.style.cssText='font-size:17px;color:#e5f5ff';info.append(kicker,title);header.append(emblem,info);clone.insertBefore(header,clone.firstChild);
-  stage.appendChild(clone);document.body.appendChild(stage);await new Promise(resolve=>requestAnimationFrame(resolve));
+  stage.setAttribute('aria-hidden','true');
+  stage.appendChild(clone);document.body.appendChild(stage);
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  makeRaceCaptureColorsCompatible(clone);
   canvas=await capture(clone,{backgroundColor:'#030a13',scale:1.45,useCORS:true,allowTaint:false,logging:false});
   const blob=await canvasToBlob(canvas,'image/png');const file=new File([blob],`${slug}.png`,{type:'image/png',lastModified:Date.now()});
   const assetTitle=kind==='bonus'?`${race.name} · Bônus raciais`:`${race.name} · ${race.talents[index][0]}`;
   openShareConfirmation({blob,file,filename:`${slug}.png`,title:assetTitle},button,slug);
- }catch(error){console.error('Falha ao preparar compartilhamento da linhagem:',error);toast('Não foi possível preparar a imagem. Tente novamente.');}
+ }catch(error){console.error('Falha ao preparar compartilhamento da linhagem:',error);toast('Não foi possível preparar a imagem da linhagem. Verifique a conexão e tente novamente.');}
  finally{if(canvas){canvas.width=1;canvas.height=1;}if(stage)stage.remove();sharePreparationInProgress=false;if(button.isConnected){button.disabled=false;button.classList.remove('is-preparing');button.innerHTML=svgIcon('share');}}
 }
 
