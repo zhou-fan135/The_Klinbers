@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 :root{
  --bg:#02050a;--bg2:#050b14;--panel:#06101d;--panel2:#09192b;--panel3:#0b2138;
  --line:#12395e;--line2:#1c5a8b;--blue:#087cff;--cyan:#39bfff;--cyan2:#78dcff;
@@ -368,6 +367,37 @@ button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card
 }
 
 
+
+/* Dinamismo geral: transições leves, limitadas a opacidade e transformação. */
+@keyframes towerBlockReveal{
+  0%{opacity:0;transform:translate3d(0,14px,0) scale(.992)}
+  72%{opacity:1;transform:translate3d(0,-1px,0) scale(1.001)}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes towerInfoUnfold{
+  0%{opacity:0;transform:translate3d(0,-7px,0) scaleY(.985)}
+  68%{opacity:1;transform:translate3d(0,1px,0) scaleY(1.002)}
+  100%{opacity:1;transform:translate3d(0,0,0) scaleY(1)}
+}
+.motion-reveal{opacity:0;}
+.motion-reveal.is-visible{opacity:1;animation:towerBlockReveal .5s cubic-bezier(.22,.68,.2,1) backwards;animation-delay:var(--motion-delay,0ms)}
+.physical-card.motion-open[open]>.card-body,.race-card.motion-open[open]>.race-body{transform-origin:top center;animation:towerInfoUnfold .46s cubic-bezier(.22,.68,.2,1) backwards}
+.physical-card.motion-open[open]>.card-body .bonus-box{animation:towerBlockReveal .42s cubic-bezier(.22,.68,.2,1) backwards;}
+.physical-card.motion-open[open]>.card-body .bonus-box:nth-child(2){animation-delay:45ms}
+.physical-card.motion-open[open]>.card-body .bonus-box:nth-child(3){animation-delay:90ms}
+.race-card.motion-open[open]>.race-body .race-section{animation:towerBlockReveal .44s cubic-bezier(.22,.68,.2,1) backwards}
+.race-card.motion-open[open]>.race-body .race-section:nth-child(2){animation-delay:40ms}
+.race-card.motion-open[open]>.race-body .race-section:nth-child(3){animation-delay:80ms}
+.race-card.motion-open[open]>.race-body .race-section:nth-child(4){animation-delay:120ms}
+.race-card.motion-open[open]>.race-body .race-talent{animation:towerBlockReveal .4s cubic-bezier(.22,.68,.2,1) backwards}
+.race-card.motion-open[open]>.race-body .race-talent:nth-child(2n){animation-delay:35ms}
+.share-capture-stage .motion-reveal,.share-capture-stage .is-visible,.share-capture-stage .card-body,.share-capture-stage .race-body,.share-capture-stage .bonus-box,.share-capture-stage .race-section,.share-capture-stage .race-talent{animation:none!important;opacity:1;filter:none;transform:none}
+.share-capture-stage .race-emblem,.share-capture-stage .race-motif,.share-capture-stage .race-motif>*{animation:none!important;opacity:1!important;filter:none!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){
+ .motion-reveal,.motion-reveal.is-visible{opacity:1;animation:none!important;transform:none!important;filter:none!important;clip-path:none!important}
+ .physical-card.motion-open[open]>.card-body,.race-card.motion-open[open]>.race-body,.physical-card.motion-open[open]>.card-body .bonus-box,.race-card.motion-open[open]>.race-body .race-section,.race-card.motion-open[open]>.race-body .race-talent{animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -476,7 +506,7 @@ const STATUS_ICON = [
 ];
 const STAT_ICON = {'⬡':'shield','◆':'bolt','ϟ':'bolt','⟳':'target','▣':'layers','◇':'eye','⌁':'shield','⛨':'shield','◎':'eye','✹':'bolt','◌':'circle','Ⅱ':'layers','⊙':'circle','≋':'wave','⌘':'book','⊕':'plus','⊘':'target','✧':'spark','✦':'spark','△':'target','▤':'book','▰':'shield','⟐':'spark','◉':'eye','⌖':'target','⟡':'spark','♛':'tower','⚗':'circle'};
 function statLine(value){const match=value.match(/^([^\w\s+.-]+)\s*/u);const remainder=match?value.slice(match[0].length):value;const status=STATUS_ICON.find(([pattern])=>pattern.test(remainder));const icon=status?.[1]||(match?STAT_ICON[match[1]]:'circle');return `<li><span class="stat-ico">${svgIcon(icon||'circle')}</span><span>${remainder}</span></li>`;}
-const RACE_BONUS_ICON = [...STATUS_ICON,[/\bintu[cç][aã]o\b/i,'intuition'],[/\bsanidade\b/i,'target'],[/\bkarma\b/i,'spark'],[/\bestamina\b/i,'wave']];
+const RACE_BONUS_ICON = [...STATUS_ICON,[/\bsanidade\b/i,'target'],[/\bkarma\b/i,'spark'],[/\bestamina\b/i,'wave']];
 function raceBonusLine(value){const label=value.replace(/^[^\p{L}\p{N}+.-]+/u,'').trim();const icon=RACE_BONUS_ICON.find(([pattern])=>pattern.test(label))?.[1]||'circle';return `<div class="race-bonus"><span class="stat-ico">${svgIcon(icon)}</span><span>${label}</span></div>`;}
 function fillIcons(root=document){root.querySelectorAll('[data-icon]').forEach(el=>{el.innerHTML=svgIcon(el.dataset.icon)});}
 
@@ -634,19 +664,127 @@ function racePage(){return `<section class="section"><div class="section-head"><
 function emptyPage(title,kicker,desc,symbol){return `<section class="section"><div class="section-head"><div><div class="section-kicker">${kicker}</div><h2>${title}</h2></div></div><div class="empty"><span class="symbol">${svgIcon(symbol,'ui-icon xl')}</span><h3>REGISTRO AINDA NÃO DISPONÍVEL</h3><p>${desc}</p></div></section>`}
 function renderPhysicals(){
  const grid=document.getElementById('physicalGrid'); if(!grid)return;
+ clearDynamicMotion(grid);
  const q=(document.getElementById('searchInput')?.value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const cat=document.getElementById('categoryFilter')?.value||'', rar=document.getElementById('rarityFilter')?.value||'';
  let list=physiques.filter(p=>(!cat||p.category===cat)&&(!rar||p.rarity===rar)&&(!q||physicalSearchIndex.get(p).includes(q)));
  list.sort((a,b)=>(PHYSICAL_RARITY_ORDER[a.rarity]??99)-(PHYSICAL_RARITY_ORDER[b.rarity]??99)||(physicalOriginalOrder.get(a)??0)-(physicalOriginalOrder.get(b)??0));
  document.getElementById('physicalCount').textContent=`${list.length} / ${physiques.length} REGISTROS`;
  grid.innerHTML=list.map((p,i)=>`<details class="physical-card" data-slug="${slugify(p.name)}" id="physical-capture-${i}" ${i===0?'open':''}><summary class="card-top"><span class="card-title"><span class="type-glyph">${svgIcon(CATEGORY_ICON[p.category]||'circle')}</span><span>${p.name}</span></span><span class="card-controls"><button class="card-expand" type="button" data-toggle-card aria-label="${i===0?'Recolher':'Expandir'} informações de ${p.name}" aria-expanded="${i===0}" title="${i===0?'Recolher':'Expandir'} informações"><span class="expand-mark" aria-hidden="true"></span></button><button class="card-share" type="button" data-share-card title="Compartilhar imagem deste físico" aria-label="Compartilhar imagem de ${p.name}">${svgIcon('share')}</button><span class="pill rarity-${p.rarity.toLowerCase()}">${p.rarity}</span><span class="pill ${CATEGORY_CLASS[p.category]||''}">${p.category}</span></span></summary><div class="card-body"><p class="description">${p.desc}</p><div class="bonus-grid"><div class="bonus-box"><h4>${svgIcon('plus')} Bônus iniciais</h4><ul>${p.initial.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('target')} Por nível</h4><ul>${p.level.map(statLine).join('')}</ul></div><div class="bonus-box"><h4>${svgIcon('layers')} A cada 5 níveis</h4><ul>${p.milestone.map(statLine).join('')}</ul></div></div></div></details>`).join('')||`<div class="empty" style="grid-column:1/-1"><span class="symbol">${svgIcon('search','ui-icon xl')}</span><h3>NENHUM REGISTRO ENCONTRADO</h3><p>Tente alterar os termos da busca ou os filtros.</p></div>`;
- grid.querySelectorAll('.physical-card').forEach(card=>{card.addEventListener('toggle',()=>syncCardToggle(card));syncCardToggle(card)});
-
+ grid.querySelectorAll('.physical-card').forEach(card=>{card.addEventListener('toggle',()=>{syncCardToggle(card);replayExpandableMotion(card)});syncCardToggle(card);if(card.open)replayExpandableMotion(card)});
+ initDynamicMotion(grid);
 }
 function syncCardToggle(card){const button=card.querySelector('[data-toggle-card]');if(button){button.setAttribute('aria-expanded',String(card.open));const action=card.open?'Recolher':'Expandir';button.setAttribute('aria-label',`${action} informações de ${card.querySelector('.card-title span:last-child')?.textContent||'físico'}`);button.title=`${action} informações`;}}
+
+/* Observadores compartilhados: entrada real na tela e rearme somente após afastamento. */
+const DYNAMIC_TARGET_SELECTOR='.hero,.section-head,.dashboard-top > *, .module-grid > *, .info-panel,.lore-panel,.lore-feature,.system-record,.physical-card,.race-card,.race-toolbar,.race-meta,.empty,.tool-panel,.stat-panel';
+const DYNAMIC_REARM_MARGIN='140px 0px 140px 0px';
+let towerRevealObserver=null;
+let towerRearmObserver=null;
+const pendingDynamicReveals=new Set();
+let dynamicRevealFrame=0;
+const pendingExpandableMotions=new Set();
+let expandableMotionFrame=0;
+
+function cancelPendingDynamicReveal(el){
+ pendingDynamicReveals.delete(el);
+ if(!pendingDynamicReveals.size&&dynamicRevealFrame){cancelAnimationFrame(dynamicRevealFrame);dynamicRevealFrame=0;}
+}
+function queueDynamicReveal(el){
+ el.classList.remove('is-visible');
+ pendingDynamicReveals.add(el);
+ if(dynamicRevealFrame)return;
+ // Dois frames permitem que o navegador aplique a remoção da classe sem forçar layout síncrono.
+ dynamicRevealFrame=requestAnimationFrame(()=>{
+  dynamicRevealFrame=requestAnimationFrame(()=>{
+   dynamicRevealFrame=0;
+   const batch=[...pendingDynamicReveals];pendingDynamicReveals.clear();
+   batch.forEach(target=>{
+    if(target.isConnected&&target.dataset.motionInView==='1')target.classList.add('is-visible');
+   });
+  });
+ });
+}
+function clearDynamicMotion(root){
+ if(!root)return;
+ const targets=[];
+ if(root.matches?.(DYNAMIC_TARGET_SELECTOR))targets.push(root);
+ targets.push(...root.querySelectorAll(DYNAMIC_TARGET_SELECTOR));
+ targets.forEach(el=>{
+  towerRevealObserver?.unobserve(el);
+  towerRearmObserver?.unobserve(el);
+  cancelPendingDynamicReveal(el);
+  el.classList.remove('motion-reveal','is-visible');
+  delete el.dataset.motionInView;
+  el.style.removeProperty('--motion-delay');
+ });
+}
+function initDynamicMotion(root=document.getElementById('pageContent')){
+ if(!root)return;
+ const targets=[...root.querySelectorAll(DYNAMIC_TARGET_SELECTOR)];
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ if(reduced){
+  targets.forEach(el=>{el.classList.remove('motion-reveal','is-visible');el.dataset.motionInView='1';});
+  return;
+ }
+ if(!('IntersectionObserver' in window))return;
+ if(!towerRevealObserver){
+  // Só inicia quando o bloco realmente toca a viewport. O estado não é revertido
+  // até ele ficar 220px além da tela, evitando o piscar perto das bordas.
+  towerRevealObserver=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>{
+    const el=entry.target;
+    if(!entry.isIntersecting||el.dataset.motionInView==='1')return;
+    el.dataset.motionInView='1';
+    queueDynamicReveal(el);
+   });
+  },{threshold:0,rootMargin:'0px'});
+  towerRearmObserver=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>{
+    if(entry.isIntersecting)return;
+    const el=entry.target;
+    el.dataset.motionInView='0';
+    el.classList.remove('is-visible');
+    cancelPendingDynamicReveal(el);
+   });
+  },{threshold:0,rootMargin:DYNAMIC_REARM_MARGIN});
+ }
+ targets.forEach((el,index)=>{
+  if(el.closest('[hidden]'))return;
+  if(!el.classList.contains('motion-reveal')){
+   el.classList.add('motion-reveal');
+   el.style.setProperty('--motion-delay',`${(index%4)*30}ms`);
+  }
+  towerRearmObserver.observe(el);
+  towerRevealObserver.observe(el);
+ });
+}
+
+/* Reinicia em lote as animações internas, sem leituras forçadas de layout. */
+function replayExpandableMotion(card){
+ if(!card)return;
+ if(!card.open){
+  card.classList.remove('motion-open');
+  pendingExpandableMotions.delete(card);
+  return;
+ }
+ card.classList.remove('motion-open');
+ pendingExpandableMotions.add(card);
+ if(expandableMotionFrame)return;
+ expandableMotionFrame=requestAnimationFrame(()=>{
+  expandableMotionFrame=requestAnimationFrame(()=>{
+   expandableMotionFrame=0;
+   const batch=[...pendingExpandableMotions];pendingExpandableMotions.clear();
+   batch.forEach(target=>{if(target.isConnected&&target.open)target.classList.add('motion-open');});
+  });
+ });
+}
+
 function navigate(page){
  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
- document.getElementById('pageContent').innerHTML=pages[page]();
+ const pageContent=document.getElementById('pageContent');
+ clearDynamicMotion(pageContent);
+ pageContent.innerHTML=pages[page]();
  if(page==='introducao'){
   const input=document.getElementById('loreSearchInput');
   input?.addEventListener('input',()=>{const q=input.value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();let shown=0;document.querySelectorAll('[data-lore-record]').forEach(record=>{const text=record.textContent.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const match=!q||text.includes(q);record.hidden=!match;if(match)shown++});const count=document.getElementById('loreSearchCount');if(count)count.textContent=`${shown} / 04 REGISTROS`});
@@ -668,10 +806,11 @@ function navigate(page){
  }
  if(page==='racas'){
   document.getElementById('raceSearch').addEventListener('input',renderRaces);
-  document.querySelectorAll('.race-card').forEach(card=>card.addEventListener('toggle',()=>playRaceEmblemMotion(card)));
+  document.querySelectorAll('.race-card').forEach(card=>card.addEventListener('toggle',()=>{playRaceEmblemMotion(card);replayExpandableMotion(card)}));
   document.getElementById('raceToggleAll').addEventListener('click',()=>{const cards=[...document.querySelectorAll('.race-card:not([hidden])')];const open=cards.some(c=>!c.open);cards.forEach(c=>c.open=open);document.getElementById('raceToggleAll').innerHTML=`${svgIcon(open?'layers':'plus')} ${open?'Recolher todos':'Expandir todos'}`});
  }
  fillIcons(document.getElementById('pageContent'));
+ initDynamicMotion(document.getElementById('pageContent'));
  window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
@@ -682,7 +821,8 @@ document.getElementById('heroFactTower').innerHTML=svgIcon('tower');
 document.getElementById('heroFactRecords').innerHTML=svgIcon('database');
 document.getElementById('heroFactStatus').innerHTML=svgIcon('circle');
 document.getElementById('themeBtn').addEventListener('click',()=>{document.body.classList.toggle('quiet-mode');document.getElementById('themeBtn').innerHTML=svgIcon(document.body.classList.contains('quiet-mode')?'circle':'glow');document.getElementById('themeBtn').title=document.body.classList.contains('quiet-mode')?'Ativar efeitos de iluminação':'Reduzir efeitos de iluminação';toast(document.body.classList.contains('quiet-mode')?'Iluminação reduzida.':'Iluminação ativada.')});
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+let toastTimer=0;
+function toast(msg){const t=document.getElementById('toast');clearTimeout(toastTimer);t.textContent=msg;t.classList.add('show');toastTimer=window.setTimeout(()=>{t.classList.remove('show');toastTimer=0},2200)}
 let html2canvasLoader=null;
 function ensureHtml2Canvas(){
  if(window.html2canvas)return Promise.resolve(window.html2canvas);
@@ -732,7 +872,7 @@ function setPhysicalShareState(slug,state){
 function buildShareClone(card){
  const width=Math.max(280,Math.round(card.getBoundingClientRect().width||card.offsetWidth||560));
  const stage=document.createElement('div');
- stage.setAttribute('aria-hidden','true');
+ stage.setAttribute('aria-hidden','true');stage.classList.add('share-capture-stage');
  stage.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;min-width:${width}px;max-width:${width}px;overflow:visible;pointer-events:none;z-index:-1;`;
  const clone=card.cloneNode(true);
  clone.open=true;
@@ -819,7 +959,6 @@ async function sharePhysicalCard(button){
 // rgb()/rgba() no clone temporário, sem alterar a aparência da página original.
 function makeRaceCaptureColorsCompatible(root){
  const colorPattern=/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/gi;
- const properties=['border-top-color','border-right-color','border-bottom-color','border-left-color','border-block-start-color','border-block-end-color','border-inline-start-color','border-inline-end-color','background-image','box-shadow','text-shadow','outline-color'];
  const toRgb=value=>value.replace(colorPattern,(_,r,g,b,a)=>{
   const channel=n=>Math.round(Math.max(0,Math.min(1,Number(n)))*255);
   const rgb=`${channel(r)}, ${channel(g)}, ${channel(b)}`;
@@ -827,11 +966,12 @@ function makeRaceCaptureColorsCompatible(root){
  });
  for(const element of [root,...root.querySelectorAll('*')]){
   const computed=getComputedStyle(element);
-  for(const property of properties){
+  // Inclui color, background-color e quaisquer propriedades de cor não previstas
+  // na lista anterior, mas só altera no clone as propriedades que exigem conversão.
+  for(let i=0;i<computed.length;i++){
+   const property=computed[i];
    const value=computed.getPropertyValue(property);
-   if(value&&value.includes('color(srgb')){
-    element.style.setProperty(property,toRgb(value),'important');
-   }
+   if(value&&value.includes('color(srgb'))element.style.setProperty(property,toRgb(value),'important');
   }
  }
 }
@@ -849,7 +989,7 @@ async function shareRaceBlock(button,kind){
   const capture=await ensureHtml2Canvas();
   if(document.fonts?.status==='loading')await document.fonts.ready.catch(()=>{});
   const width=Math.max(280,Math.round(card.getBoundingClientRect().width||560));
-  stage=document.createElement('div');stage.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;min-width:${width}px;max-width:${width}px;pointer-events:none;z-index:-1;`;
+  stage=document.createElement('div');stage.classList.add('share-capture-stage');stage.style.cssText=`position:fixed;left:-12000px;top:0;width:${width}px;min-width:${width}px;max-width:${width}px;pointer-events:none;z-index:-1;`;
   const clone=card.cloneNode(true);clone.open=true;clone.style.width=width+'px';clone.querySelectorAll('.race-share').forEach(el=>el.remove());
   const body=clone.querySelector('.race-body');
   body.style.display='block';
