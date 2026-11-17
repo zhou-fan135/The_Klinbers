@@ -414,7 +414,7 @@ button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card
 .trait-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
 .trait-card{position:relative;min-width:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--trait-color) 30%,#15334b);background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 6%,#071625),#030a13 76%);box-shadow:0 7px 22px #0007,inset 0 0 19px color-mix(in srgb,var(--trait-color) 4%,transparent);clip-path:polygon(0 11px,11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%);transition:border-color .2s,box-shadow .2s}
 .trait-card:hover{border-color:color-mix(in srgb,var(--trait-color) 70%,#15334b);box-shadow:0 0 15px color-mix(in srgb,var(--trait-color) 13%,transparent),0 7px 22px #0008}
-.trait-top{position:relative;display:flex;align-items:center;gap:11px;min-height:78px;padding:12px 84px 12px 13px;list-style:none;cursor:pointer;background:linear-gradient(90deg,color-mix(in srgb,var(--trait-color) 8%,transparent),transparent 70%)}
+.trait-top{position:relative;display:flex;align-items:center;gap:11px;min-height:78px;padding:12px 12px 12px 13px;list-style:none;cursor:pointer;background:linear-gradient(90deg,color-mix(in srgb,var(--trait-color) 8%,transparent),transparent 70%)}
 .trait-top::-webkit-details-marker{display:none}
 .trait-order{display:grid;place-items:center;flex:0 0 34px;width:34px;height:30px;border:1px solid color-mix(in srgb,var(--trait-color) 36%,#173249);background:#030b15;color:var(--trait-color);font:800 11px 'Barlow Condensed';letter-spacing:.7px}
 .trait-sigil{position:relative;display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;color:var(--trait-color);border:1px solid color-mix(in srgb,var(--trait-color) 48%,#15334b);background:radial-gradient(circle,color-mix(in srgb,var(--trait-color) 16%,#06111d),#030a13 72%);box-shadow:0 0 calc(7px + 10px * var(--trait-glow)) color-mix(in srgb,var(--trait-color) 22%,transparent),inset 0 0 12px color-mix(in srgb,var(--trait-color) 10%,transparent)}
@@ -422,18 +422,46 @@ button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card
 .trait-rarity-symbol g,.trait-rarity-symbol>path,.trait-rarity-symbol .trait-hero-star{transform-box:fill-box;transform-origin:center}
 /* Os dois anéis giram em torno da origem local (0,0), que coincide com o núcleo no grupo pai. */
 .trait-card .trait-atom-orbit-a,.trait-card .trait-atom-orbit-b{transform-box:view-box;transform-origin:0 0}
-.trait-heading{display:flex;flex-direction:column;gap:4px;min-width:0}
+.trait-heading{display:flex;flex:1 1 auto;flex-direction:column;gap:4px;min-width:0}
 .trait-kicker{color:var(--trait-color);font:800 9px 'Barlow Condensed';letter-spacing:1.35px;text-transform:uppercase;opacity:.92}
 .trait-heading strong{color:#c6dcec;font:800 19px/1.08 'Barlow Condensed';letter-spacing:.35px;overflow-wrap:anywhere}
-.trait-card-controls{position:absolute;top:50%;right:10px;transform:translateY(-50%);z-index:3;display:flex;align-items:center;gap:4px}
-.trait-card .card-expand,.trait-share{display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;padding:0;border:1px solid color-mix(in srgb,var(--trait-color) 42%,#173249);background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 12%,#0b1b2c),#030a13);color:var(--trait-color);box-shadow:inset 0 0 8px color-mix(in srgb,var(--trait-color) 10%,transparent);cursor:pointer;transition:border-color .2s,background .2s,color .2s,box-shadow .2s,transform .2s}
-.trait-card .card-expand:hover,.trait-share:hover,.trait-card .card-expand:focus-visible,.trait-share:focus-visible{outline:none;border-color:var(--trait-color);background:color-mix(in srgb,var(--trait-color) 16%,#061421);box-shadow:0 0 12px color-mix(in srgb,var(--trait-color) 32%,transparent)}
-.trait-card .card-expand:hover .expand-mark,.trait-card .card-expand:focus-visible .expand-mark{border-color:var(--trait-color);background:color-mix(in srgb,var(--trait-color) 18%,#061421)}
-.trait-card .card-expand:focus-visible,.trait-share:focus-visible{outline:1px solid var(--trait-color);outline-offset:2px}
-.trait-card .card-expand{border-color:transparent;background:transparent;box-shadow:none}
-.trait-card .card-expand .expand-mark{border-color:color-mix(in srgb,var(--trait-color) 60%,#173249);color:var(--trait-color);background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 12%,#0b1b2c),#030a13)}
-.trait-card[open] .card-expand .expand-mark{background:color-mix(in srgb,var(--trait-color) 16%,#07365a);box-shadow:0 0 9px color-mix(in srgb,var(--trait-color) 30%,transparent)}
+.trait-card-controls{position:relative;z-index:3;display:flex;flex:0 0 auto;align-items:center;gap:8px;margin-left:auto}
+/* O botão de expansão segue a mesma construção dos Físicos:
+   o botão é transparente e apenas o sinal interno desenha a moldura única. */
+.trait-card .card-expand{
+ display:inline-grid;place-items:center;flex:0 0 27px;width:27px;height:27px;min-width:27px;min-height:27px;
+ padding:0;border:0;border-radius:0;background:transparent;color:var(--trait-color);box-shadow:none;
+ cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+ transition:color .2s,filter .2s,transform .2s;
+}
+.trait-share{
+ display:inline-grid;place-items:center;flex:0 0 28px;width:28px;height:28px;min-width:28px;min-height:28px;
+ padding:0;border:1px solid color-mix(in srgb,var(--trait-color) 48%,#173249);border-radius:0;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 15%,#0b1b2c),color-mix(in srgb,var(--trait-color) 5%,#030a13));
+ color:var(--trait-color);box-shadow:inset 0 0 8px color-mix(in srgb,var(--trait-color) 12%,transparent);
+ cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+ transition:border-color .2s,background .2s,color .2s,box-shadow .2s,transform .2s;
+}
+.trait-share:hover{border-color:var(--trait-color);background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 24%,#0b1b2c),color-mix(in srgb,var(--trait-color) 10%,#061421));box-shadow:0 0 10px color-mix(in srgb,var(--trait-color) 25%,transparent),inset 0 0 8px color-mix(in srgb,var(--trait-color) 12%,transparent)}
+/* O foco de mouse não cria uma segunda moldura; teclado recebe o mesmo brilho sutil do hover. */
+.trait-card .card-expand:focus{outline:none}
+.trait-card .card-expand:focus-visible{outline:none;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--trait-color) 62%,transparent))}
+.trait-share:focus{outline:none}
+.trait-share:focus-visible{outline:none;border-color:var(--trait-color);box-shadow:inset 0 0 0 1px var(--trait-color),0 0 9px color-mix(in srgb,var(--trait-color) 28%,transparent)}
+.trait-card .card-expand .expand-mark{
+ width:23px;height:23px;flex:0 0 23px;margin-left:2px;
+ border:1px solid color-mix(in srgb,var(--trait-color) 72%,#173249);color:var(--trait-color);
+ background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 22%,#0b1b2c),color-mix(in srgb,var(--trait-color) 8%,#030a13));
+ box-shadow:none;transition:transform .22s,background .22s,border-color .22s,box-shadow .22s;
+}
+.trait-card:not([open]) .card-expand .expand-mark{background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 24%,#0b1b2c),color-mix(in srgb,var(--trait-color) 11%,#030a13));border-color:color-mix(in srgb,var(--trait-color) 82%,#173249)}
+.trait-card[open] .card-expand .expand-mark{background:linear-gradient(145deg,color-mix(in srgb,var(--trait-color) 18%,#061421),color-mix(in srgb,var(--trait-color) 8%,#030a13));box-shadow:0 0 8px color-mix(in srgb,var(--trait-color) 24%,transparent);transform:rotate(45deg)}
+/* Mantém o contorno luminoso temático como nos Físicos, sem desenhar uma moldura duplicada. */
+.trait-card .card-expand:hover{color:color-mix(in srgb,var(--trait-color) 72%,white);filter:drop-shadow(0 0 6px color-mix(in srgb,var(--trait-color) 62%,transparent))}
+.trait-card .card-expand:active,.trait-share:active{transform:scale(.94)}
 .trait-share .ui-icon{width:14px;height:14px}
+.trait-card-controls>*{position:relative;flex:0 0 auto;box-sizing:border-box}
+.trait-card-controls button{outline-offset:0}
 .trait-share:disabled{opacity:.55;cursor:wait}
 .trait-share.is-preparing .ui-icon{animation:sharePrepPulse 1.1s ease-in-out infinite alternate}
 .trait-share.is-sharing{color:color-mix(in srgb,var(--trait-color) 70%,white);box-shadow:0 0 14px color-mix(in srgb,var(--trait-color) 45%,transparent)}
@@ -541,7 +569,7 @@ button,.physical-card,.module-card,.nav-btn,.icon-btn,.ghost-btn,.tool-btn,.card
 @keyframes traitUniqueOrbit{0%,100%{transform:scale(.88);opacity:.2}50%{transform:scale(1.08);opacity:.9}}
 @media(max-width:1050px){.trait-rarity-filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:680px){.trait-grid{grid-template-columns:1fr}.trait-toolbar .tool-btn{flex:1 1 auto}.trait-meta{align-items:flex-start;flex-direction:column;gap:4px}.trait-filter-heading{align-items:flex-start;flex-direction:column;gap:4px}}
-@media(max-width:480px){.trait-rarity-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.trait-top{gap:8px;padding-left:9px;padding-right:78px}.trait-order{flex-basis:30px;width:30px}.trait-sigil{flex-basis:42px;width:42px;height:42px}.trait-heading strong{font-size:17px}.trait-kicker{font-size:8px}.trait-card-controls{right:7px;gap:2px}.trait-card .card-expand,.trait-share{width:25px;height:25px;flex-basis:25px}}
+@media(max-width:480px){.trait-rarity-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.trait-top{gap:8px;padding:10px 9px;min-height:70px}.trait-order{flex-basis:30px;width:30px}.trait-sigil{flex-basis:42px;width:42px;height:42px}.trait-heading strong{font-size:17px}.trait-kicker{font-size:8px}.trait-card-controls{gap:7px;margin-left:8px}.trait-card .card-expand,.trait-share{width:26px;height:26px;min-width:26px;min-height:26px;flex-basis:26px}.trait-card .card-expand .expand-mark{width:19px;height:19px;flex-basis:19px}}
 @media(prefers-reduced-motion:reduce){.trait-card .trait-sigil,.trait-card .trait-rarity-symbol,.trait-card .trait-rarity-symbol g,.trait-card .trait-atom-shell,.trait-card .trait-electron,.trait-card .trait-particle,.trait-theme-unico .trait-sigil:after{animation:none!important}.trait-card .trait-electron{display:none!important}.trait-particle{display:none}}
 .share-capture-stage .trait-rarity-symbol,.share-capture-stage .trait-rarity-symbol *,.share-capture-stage .trait-particle{animation:none!important;filter:none!important}
 .share-capture-stage .trait-rarity-symbol animateMotion{display:none!important}
